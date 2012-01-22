@@ -31,8 +31,7 @@ var world = function (spec, my) {
            tileY > my.data.layers[0].height) {
             return null;
         }
-        return {'x': (tileX/2 - tileY/2) * my.data.tilesets[0].tilewidth,
-                'y': (tileX/2 + tileY/2) * my.data.tilesets[0].tileheight,
+        return {'x': tileX, 'y': tileY,
                 'width': my.data.tilesets[0].tilewidth,
                 'height': my.data.tilesets[0].tileheight,
                };

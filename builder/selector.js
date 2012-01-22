@@ -15,9 +15,8 @@ var selector = function (spec, my) {
 
     that.moveTo = function (pos) {
         if(pos) {
-            console.log(pos);
-            that.x = pos.x;
-            that.y = pos.y;
+            that.x = (pos.x - pos.y) * pos.width / 2;
+            that.y = (pos.x + pos.y) * pos.height / 2;
             that.scaleX = pos.width;
             that.scaleY = pos.height;
             that.visible = true;

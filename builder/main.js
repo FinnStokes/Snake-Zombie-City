@@ -23,7 +23,6 @@ jQuery(document).ready(function () {
         if(stage.mouseInBounds) {
             cursor.moveTo(city.tileAt(stage.mouseX - stage.x,
                                       stage.mouseY - stage.y));
-            console.log(cursor.x+", "+cursor.y);
             
             if(stage.mouseX < 50) {
                 stage.x += scrollSpeed;

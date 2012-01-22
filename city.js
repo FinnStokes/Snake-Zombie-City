@@ -4,7 +4,7 @@ var cities = {};
 
 var premade = {
     'infected': ['test.json'],
-    'ruined': ['test.json'],
+    'ruined': ['test.json','test2.json'],
 }
 
 exports.random = function (type, done) {
@@ -54,7 +54,7 @@ exports.remove = function(type, id) {
 };
 
 exports.add = function(type, id, done) {
-    filename = premade[type][Math.floor(Math.random(premade[type].length))];
+    filename = premade[type][Math.floor(Math.random()*premade[type].length)];
     
     fs.readFile(__dirname + "/" + filename, function (err, data) {
         if (!err) {

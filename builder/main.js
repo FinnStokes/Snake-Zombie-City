@@ -5,9 +5,6 @@ jQuery(document).ready(function () {
 
     canvas.width = 800;
     canvas.height = 600;
-
-    stage.scaleX = 64;
-    stage.scaleY = 64;
     
     var city = world({'socket': socket});
     city.load();

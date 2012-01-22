@@ -1,15 +1,24 @@
+var fs = require('fs');
+
 var cities = {};
 
-exports.random = function (type) {
+var premade = {
+    'infected': ['test.json'],
+    'ruined': ['test.json'],
+}
+
+exports.random = function (type, done) {
     if (!cities[type]) {
         cities[type] = {'data': [], 'free': []};
     }
 
     if (cities[type].free.length > 0) {
-        return cities[type].free.pop();
+        var id = cities[type].free.pop();
+        done(cities[type].data[id]);
+        return id;
     } else {
-        var newCity = exports.create({'seed': Math.random()});
-        cities[type].data.push(newCity);
+        exports.add(type, cities[type].data.length, done);
+        cities[type].data.push(null);
         return cities[type].data.length - 1;
     }
 };
@@ -44,37 +53,17 @@ exports.remove = function(type, id) {
     }
 };
 
-exports.create = function(spec,my) {
-    var that;
-    my = my || {};
-    spec = spec || {};
-
-    that = { "height":10,
-             "layers":[
-                 {
-                     "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                     "height":10,
-                     "name":"Tile Layer 1",
-                     "opacity":1,
-                     "type":"tilelayer",
-                     "visible":true,
-                     "width":10,
-                     "x":0,
-                     "y":0
-                 }],
-             "orientation":"isometric",
-             "properties":
-             {
-
-             },
-             "tileheight":32,
-             "tilesets":[],
-             "tilewidth":32,
-             "version":1,
-             "width":10
-           };
-
-    that.seed = spec.seed || 0;
-
-    return that;
+exports.add = function(type, id, done) {
+    filename = premade[type][Math.floor(Math.random(premade[type].length))];
+    
+    fs.readFile(__dirname + "/" + filename, function (err, data) {
+        if (!err) {
+            cities[type].data[id] = JSON.parse(data);
+            if(done) {
+                done(cities[type].data[id]);
+            }
+        } else {
+            console.log(err);
+        }
+    });
 };

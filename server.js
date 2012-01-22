@@ -11,20 +11,20 @@ var player = require('./player.js');
 
 var serveFile = function (req, res, path, mimetype) {
     fs.readFile(__dirname + path + req.params.file + '.' + req.params.ext,
-        function (err, data) {
-            if (err) {
-            res.writeHead(500);
-            return res.end('Error loading ' + req.params.file+'.'+req.params.ext);
-		}
-		
-		var mimetype = '';
-		if (req.params.ext == 'html') mimetype = 'text/html';
-		if (req.params.ext == 'css') mimetype = 'text/css';
-		if (req.params.ext == 'js') mimetype = 'text/javascript';
-		if (req.params.ext == 'png') mimetype = 'image/png';
-		res.writeHead(200, { 'Content-Type': mimetype });
-		res.end(data, 'utf-8');
-	})
+                function (err, data) {
+                    if (err) {
+                        res.writeHead(500);
+                        return res.end('Error loading ' + req.params.file+'.'+req.params.ext);
+		            }
+		            
+		            var mimetype = '';
+		            if (req.params.ext == 'html') mimetype = 'text/html';
+		            if (req.params.ext == 'css') mimetype = 'text/css';
+		            if (req.params.ext == 'js') mimetype = 'text/javascript';
+		            if (req.params.ext == 'png') mimetype = 'image/png';
+		            res.writeHead(200, { 'Content-Type': mimetype });
+		            res.end(data, 'utf-8');
+	            });
 };
 
 app.get('/:file.:ext', function (req, res){
@@ -90,7 +90,7 @@ app.listen(80);
 builderIo.on('connection', function (socket) {
     console.log('connect');
 	var p = player.create({'socket': socket});
-		
+	
 	socket.on('disconnect', function () {
 		city.free('ruined',p.city);
 		delete p;
@@ -108,15 +108,18 @@ builderIo.on('connection', function (socket) {
 	socket.on('getcity', function () {
         console.log('get');
 		if (p.city === null) {
-			p.city = city.random('ruined');
-		}
-		socket.emit('city', city.get('ruined',p.city));
+			p.city = city.random('ruined', function (data) {
+                socket.emit('city', data);
+            });
+		} else {
+		    socket.emit('city', city.get('ruined',p.city));
+        }
 	});
 });
 
 rescueIo.on('connection', function (socket) {
 	var p = player.create({'socket': socket});
-		
+	
 	socket.on('disconnect', function () {
 		city.free('infected',p.city);
 		delete p;
@@ -133,9 +136,11 @@ rescueIo.on('connection', function (socket) {
 
 	socket.on('getcity', function () {
 		if (p.city === null) {
-		    console.log('rand');
-			p.city = city.random('infected');
-		}
-		socket.emit('city', city.get('infected',p.city));
+			p.city = city.random('infected', function (data) {
+                socket.emit('city', data);
+            });
+		} else {
+		    socket.emit('city', city.get('infected',p.city));
+        }
 	});
 });

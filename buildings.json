@@ -1,0 +1,26 @@
+{ "buildings": [
+    {
+        "name": "Hospital",
+        "width": 1,
+        "height": 1,
+        "data": [67]
+    },
+    {
+        "name": "Police Station",
+        "width": 1,
+        "height": 1,
+        "data": [68]
+    },
+    {
+        "name": "Fire Station",
+        "width": 1,
+        "height": 1,
+        "data": [69]
+    },
+    {
+        "name": "Power Plant",
+        "width": 2,
+        "height": 2,
+        "data": [70,71,72,73]
+    }]
+}

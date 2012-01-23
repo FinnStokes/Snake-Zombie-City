@@ -22,10 +22,8 @@ var world = function (spec, my) {
 
     that.tileAt = function (x, y) {
         var pos = {};
-        tileX = Math.floor(y / my.data.tilesets[0].tileheight +
-                           x / my.data.tilesets[0].tilewidth + 1/2);
-        tileY = Math.floor(y / my.data.tilesets[0].tileheight -
-                           x / my.data.tilesets[0].tilewidth + 1/2);
+        tileX = Math.floor(x / my.data.tilesets[0].tilewidth + 1/2);
+        tileY = Math.floor(y / my.data.tilesets[0].tileheight + 1/2);
         if(tileX < 0 || tileY < 0 ||
            tileX > my.data.layers[0].width ||
            tileY > my.data.layers[0].height) {
@@ -55,8 +53,8 @@ var world = function (spec, my) {
                     for (var x = 0; x < my.data.layers[0].width; ++x) {
                         var index = x + (y * my.data.layers[0].width);
                         var newTile = tile({
-                            'x': (x / 2 - y / 2) * my.data.tilesets[0].tilewidth,
-                            'y': (x / 2 + y / 2) * my.data.tilesets[0].tileheight,
+                            'x': x * my.data.tilesets[0].tilewidth,
+                            'y': y * my.data.tilesets[0].tileheight,
                             'id': my.data.layers[0].data[index] - my.data.tilesets[0].firstgid,
                             'tileset': tileset,
                             'offset': {

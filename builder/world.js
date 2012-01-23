@@ -57,7 +57,7 @@ var world = function (spec, my) {
                         var newTile = tile({
                             'x': (x / 2 - y / 2) * my.data.tilesets[0].tilewidth,
                             'y': (x / 2 + y / 2) * my.data.tilesets[0].tileheight,
-                            'id': my.data.layers[0].data[index] - my.data.tilesets[0].firstgid,
+                            'id': my.data.layers[0].data[index] - 1,
                             'tileset': tileset,
                             'offset': {
                                 'x': my.data.tilesets[0].tilewidth/2,

@@ -3,7 +3,7 @@ var fs = require('fs');
 var cities = {};
 
 var premade = {
-    'infected': ['test.json'],
+    'infected': ['test.json','test2.json'],
     'ruined': ['test.json','test2.json'],
 }
 

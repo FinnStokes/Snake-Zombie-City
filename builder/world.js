@@ -19,22 +19,51 @@ var world = function (spec, my) {
         spec.socket.emit('setcity', my.data);
         delete my.data;
     };
+    
+    that.tileWidth = function () {
+        if(my.data) {
+            return my.data.tilesets[0].tilewidth;
+        } else {
+            return 0;
+        }
+    }
+    
+    that.tileHeight = function () {
+        if(my.data) {
+            return my.data.tilesets[0].tileheight;
+        } else {
+            return 0;
+        }
+    }
+
+    that.width = function () {
+        if(my.data) {
+            return my.data.layers[0].width;
+        } else {
+            return 0;
+        }
+    }
+
+    that.height = function () {
+        if(my.data) {
+            return my.data.layers[0].height;
+        } else {
+            return 0;
+        }
+    }
 
     that.tileAt = function (x, y) {
         var pos = {};
-        tileX = Math.floor(y / my.data.tilesets[0].tileheight +
+        pos.x = Math.floor(y / my.data.tilesets[0].tileheight +
                            x / my.data.tilesets[0].tilewidth + 1/2);
-        tileY = Math.floor(y / my.data.tilesets[0].tileheight -
+        pos.y = Math.floor(y / my.data.tilesets[0].tileheight -
                            x / my.data.tilesets[0].tilewidth + 1/2);
-        if(tileX < 0 || tileY < 0 ||
-           tileX > my.data.layers[0].width ||
-           tileY > my.data.layers[0].height) {
-            return null;
-        }
-        return {'x': tileX, 'y': tileY,
-                'width': my.data.tilesets[0].tilewidth,
-                'height': my.data.tilesets[0].tileheight,
-               };
+        //if(pos.x < 0 || pos.y < 0 ||
+        //   pos.x >= my.data.layers[0].width ||
+        //   pos.y >= my.data.layers[0].height) {
+        //    return null;
+        //}
+        return pos;
     }
     
     var render = function () {

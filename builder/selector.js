@@ -13,12 +13,14 @@ var selector = function (spec, my) {
  	that.graphics.closePath();
  	that.graphics.endFill();
 
+    var city = spec.city;
+
     that.moveTo = function (pos) {
         if(pos) {
-            that.x = (pos.x - pos.y) * pos.width / 2;
-            that.y = (pos.x + pos.y) * pos.height / 2;
-            that.scaleX = pos.width;
-            that.scaleY = pos.height;
+            that.x = (pos.x - pos.y) * city.tileWidth() / 2;
+            that.y = (pos.x + pos.y) * city.tileHeight() / 2;
+            that.scaleX = city.tileWidth();
+            that.scaleY = city.tileHeight();
             that.visible = true;
         }
     }

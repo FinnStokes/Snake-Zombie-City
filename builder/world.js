@@ -20,6 +20,7 @@ var world = function (spec, my) {
     that.upload = function () {
         spec.socket.emit('setcity', my.data);
         delete my.data;
+        that.load();
     };
     
     that.tileWidth = function () {
@@ -157,7 +158,6 @@ var world = function (spec, my) {
         spec.status.money += 0.1*spec.status.population/20;
         if(spec.status.infected > spec.status.population) {
             that.upload();
-            that.load();
         }
     }
     

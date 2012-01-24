@@ -64,7 +64,9 @@ jQuery(document).ready(function () {
     };
 
     stage.onMouseDown = function (event) {
-        cursor.place();
+        if(cursor) {
+            cursor.place();
+        }
     }
     
     document.onkeyup = function (key) {

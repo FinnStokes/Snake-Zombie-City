@@ -55,7 +55,11 @@ exports.remove = function(type, id) {
 
 exports.add = function(type, id, done) {
     filename = premade[type][Math.floor(Math.random()*premade[type].length)];
-    
+
+    if (!cities[type]) {
+        cities[type] = {'data': [], 'free': []};
+    }    
+
     fs.readFile(__dirname + "/" + filename, function (err, data) {
         if (!err) {
             cities[type].data[id] = JSON.parse(data);

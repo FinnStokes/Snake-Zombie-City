@@ -79,10 +79,41 @@ var world = function (spec, my) {
         return false;
     }
 
-    that.setTile = function (x, y, id) {
+    that.setTile = function (x, y, gid) {
         var index = x + (y * my.data.layers[0].width);
-        my.data.layers[0].data[index] = id;
-        tiles[index].spriteSheet;
+        my.data.layers[0].data[index] = gid;
+        var tilesetId = gid < my.data.tilesets[2].firstgid ? 0 : 1;
+        var offset = my.data.tilesets[tilesetId*2].firstgid;
+        console.log(gid + ": " + tilesetId + '/' + my.data.tilesets[2].firstgid);
+        tiles[index].setTile(gid - offset, tileset[tilesetId], 
+                            { 'x': my.data.tilesets[0].tilewidth/2,
+                              'y': my.data.tilesets[tilesetId*2].tileheight - my.data.tilesets[0].tileheight/2,
+                            });
+        
+    }
+    
+    that.loaded = function () {
+        if(my.data) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    that.getTileset = function (id) {
+        if (my.data) {
+            return tileset[id];
+        } else {
+            return null;
+        }
+    }
+
+    that.getTilesetData = function (id) {
+        if (my.data) {
+            return my.data.tilesets[id];
+        } else {
+            return null;
+        }
     }
     
     var render = function () {

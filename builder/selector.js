@@ -2,21 +2,14 @@ var selector = function (spec, my) {
     var that;
     my = my || {};
     
-    that = new Shape();
+    //that = new Shape();
+    that = new Container();
     that.visible = false;
 
     var buildings = spec.buildings;
-    var building = 3;
+    var building;
 
     that.alpha = spec.alpha || 0.5;
-
-    that.graphics.beginFill(spec.colour);
-    that.graphics.moveTo(-buildings[building].width * 0.5, (buildings[building].height - 1) * 0.5);
-    that.graphics.lineTo(0,-0.5);
-    that.graphics.lineTo(buildings[building].width * 0.5, (buildings[building].height - 1) * 0.5);
-    that.graphics.lineTo(0,buildings[building].height - 0.5);
-    that.graphics.closePath();
-    that.graphics.endFill();
 
     var city = spec.city;
     var pos;
@@ -24,14 +17,49 @@ var selector = function (spec, my) {
     var inBounds = function (checkPos) {
 	return checkPos && checkPos.x >= 0 && checkPos.y >= 0 && checkPos.x + buildings[building].width <= city.width() && checkPos.y + buildings[building].height <= city.height();
     }
+    
+    that.setBuilding = function (newBuilding) {
+        building = newBuilding;
+
+        /*that.graphics.clear();
+        that.graphics.beginFill(spec.colour);
+        that.graphics.moveTo(-buildings[building].width * 0.5, (buildings[building].height - 1) * 0.5);
+        that.graphics.lineTo(0,-0.5);
+        that.graphics.lineTo(buildings[building].width * 0.5, (buildings[building].height - 1) * 0.5);
+        that.graphics.lineTo(0,buildings[building].height - 0.5);
+        that.graphics.closePath();
+        that.graphics.endFill();*/
+
+        if (city.loaded()) {
+            that.removeAllChildren();
+		    for (var x = 0; x < buildings[building].width; ++x) {
+		        for (var y = 0; y < buildings[building].height; ++y) {
+			        var gid = buildings[building].data[x + y * buildings[building].width];
+                    var tilesetId = gid < city.getTilesetData(2).firstgid ? 0 : 1;
+                    var offset = city.getTilesetData(tilesetId*2).firstgid;
+                    var newTile = tile({
+                        'x': (x / 2 - y / 2) * city.getTilesetData(0).tilewidth,
+                        'y': (x / 2 + y / 2) * city.getTilesetData(0).tileheight,
+                        'id': gid - offset,
+                        'tileset': city.getTileset(tilesetId),
+                        'offset': {
+                            'x': city.getTilesetData(0).tilewidth/2,
+                            'y': city.getTilesetData(tilesetId*2).tileheight - city.getTilesetData(0).tileheight/2,
+                        },
+                    });
+                    that.addChild(newTile);
+		        }
+            }
+		}
+    };
+
+    that.setBuilding(0);
 
     that.moveTo = function (newPos) {
         if(inBounds(newPos)) {
 	    pos = newPos;
             that.x = (pos.x - pos.y) * city.tileWidth() / 2;
             that.y = (pos.x + pos.y) * city.tileHeight() / 2;
-            that.scaleX = city.tileWidth();
-            that.scaleY = city.tileHeight();
             that.visible = true;
         }
     }
@@ -47,7 +75,7 @@ var selector = function (spec, my) {
 		            }
 		        }
 	        }
-            console.log(clear);
+
 	        if (clear) {
 		        for (var x = 0; x < buildings[building].width; ++x) {
 		            for (var y = 0; y < buildings[building].height; ++y) {

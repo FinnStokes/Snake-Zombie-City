@@ -1,26 +1,51 @@
 { "buildings": [
     {
+        "name": "Apartments",
+        "width": 1,
+        "height": 1,
+        "data": [99]
+    },
+    {
         "name": "Hospital",
         "width": 1,
         "height": 1,
-        "data": [67]
+        "data": [105]
     },
     {
         "name": "Police Station",
         "width": 1,
         "height": 1,
-        "data": [68]
+        "data": [98]
     },
     {
         "name": "Fire Station",
         "width": 1,
         "height": 1,
-        "data": [69]
+        "data": [97]
     },
     {
         "name": "Power Plant",
         "width": 2,
         "height": 2,
-        "data": [70,71,72,73]
-    }]
+        "data": [101,103,102,104]
+    },
+    {
+        "name": "House",
+        "width": 1,
+        "height": 1,
+        "data": [100]
+    },
+    {
+        "name": "Town Hall",
+        "width": 1,
+        "height": 2,
+        "data": [107,106]
+    },
+    {
+        "name": "Park",
+        "width": 1,
+        "height": 2,
+        "data": [109,108]
+    },
+  ]
 }

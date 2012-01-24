@@ -16,8 +16,15 @@ jQuery(document).ready(function () {
     
     canvas.width = 800;
     canvas.height = 600;
-    
-    var city = world({'socket': socket});
+
+    var status = {
+        "money": 2000,
+        "population": 0,
+        "sick": 0,
+        "infected": 0,
+    };
+
+    var city = world({'socket': socket, 'status': status});
     city.load();
     stage.addChild(city);
     
@@ -25,8 +32,13 @@ jQuery(document).ready(function () {
     
     var cursor;
     var buildings = jQuery.getJSON('/buildings.json', function (data) {
-        cursor = selector({'colour': Graphics.getRGB(255,255,0), 'city': city, 'buildings': data.buildings});
-        stage.addChild(cursor);
+        cursor = selector({
+            'colour': Graphics.getRGB(255,255,0),
+            'city': city,
+            'buildings': data.buildings,
+            'status': status,
+        });
+        city.addChild(cursor);
     });
     
     var update = {};
@@ -34,19 +46,19 @@ jQuery(document).ready(function () {
         stage.update();
         if(stage.mouseInBounds) {
             if(cursor){
-                cursor.moveTo(city.tileAt(stage.mouseX - stage.x,
-                                          stage.mouseY - stage.y));
+                cursor.moveTo(city.tileAt(stage.mouseX - city.x,
+                                          stage.mouseY - city.y));
             }
             
             if(stage.mouseX < 50) {
-                stage.x += scrollSpeed;
+                city.x += scrollSpeed;
             } else if(stage.mouseX > canvas.width - 20) {
-                stage.x -= scrollSpeed;
+                city.x -= scrollSpeed;
             }
             if(stage.mouseY < 50) {
-                stage.y += scrollSpeed;
+                city.y += scrollSpeed;
             } else if(stage.mouseY > canvas.height - 20) {
-                stage.y -= scrollSpeed;
+                city.y -= scrollSpeed;
             }
         }
     };
@@ -57,8 +69,8 @@ jQuery(document).ready(function () {
     
     document.onkeyup = function (key) {
         //cross browser issues exist
-        if(!key){ var key = window.event; }
-        switch(key.keyCode) {
+        if (!key) { var key = window.event; }
+        switch (key.keyCode) {
         case KEYCODE_1:
             if (cursor) {
                 cursor.setBuilding(0);
@@ -85,7 +97,7 @@ jQuery(document).ready(function () {
             }
             break;
         case KEYCODE_6:
-            if (cursor) {
+            if (cursor) { 
                 cursor.setBuilding(5);
             }
             break;
@@ -99,6 +111,11 @@ jQuery(document).ready(function () {
                 cursor.setBuilding(7);
             }
             break;
+        case KEYCODE_9:
+            if (cursor) {
+                cursor.setBuilding(8);
+            }
+            break;
         }
     }
     
@@ -106,6 +123,8 @@ jQuery(document).ready(function () {
 	    canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     };
+                       
+    stage.addChild(statusDisplay({'status': status}));     
 
     window.addEventListener('resize', resize, false);
     Ticker.addListener(update);

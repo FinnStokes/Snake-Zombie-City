@@ -2,12 +2,13 @@ var selector = function (spec, my) {
     var that;
     my = my || {};
     
-    //that = new Shape();
     that = new Container();
     that.visible = false;
 
     var buildings = spec.buildings;
     var building;
+
+    var status = spec.status;
 
     that.alpha = spec.alpha || 0.5;
 
@@ -20,15 +21,6 @@ var selector = function (spec, my) {
     
     that.setBuilding = function (newBuilding) {
         building = newBuilding;
-
-        /*that.graphics.clear();
-        that.graphics.beginFill(spec.colour);
-        that.graphics.moveTo(-buildings[building].width * 0.5, (buildings[building].height - 1) * 0.5);
-        that.graphics.lineTo(0,-0.5);
-        that.graphics.lineTo(buildings[building].width * 0.5, (buildings[building].height - 1) * 0.5);
-        that.graphics.lineTo(0,buildings[building].height - 0.5);
-        that.graphics.closePath();
-        that.graphics.endFill();*/
 
         if (city.loaded()) {
             that.removeAllChildren();
@@ -65,7 +57,11 @@ var selector = function (spec, my) {
     }
     
     that.place = function () {
-	    if(inBounds(pos)) {
+	    if (inBounds(pos)) {
+            if (status.money < buildings[building].cost) {
+                return false;
+            }
+            
 	        clear = true;
 	        for (var x = 0; x < buildings[building].width; ++x) {
 		        for (var y = 0; y < buildings[building].height; ++y) {
@@ -82,7 +78,11 @@ var selector = function (spec, my) {
 			            city.setTile(pos.x + x, pos.y + y, buildings[building].data[x + y * buildings[building].width]);
 		            }
 		        }
-	        }
+                status.money -= buildings[building].cost;
+                return true;
+	        } else {
+                return false;
+            }
 	    }
     }
     

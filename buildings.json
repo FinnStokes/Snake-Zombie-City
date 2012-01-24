@@ -3,49 +3,64 @@
         "name": "Apartments",
         "width": 1,
         "height": 1,
+        "cost": 300,
         "data": [99]
     },
     {
         "name": "Hospital",
         "width": 1,
         "height": 1,
+        "cost": 500,
         "data": [105]
     },
     {
         "name": "Police Station",
         "width": 1,
         "height": 1,
+        "cost": 500,
         "data": [98]
     },
     {
         "name": "Fire Station",
         "width": 1,
         "height": 1,
+        "cost": 500,
         "data": [97]
     },
     {
         "name": "Power Plant",
         "width": 2,
         "height": 2,
+        "cost": 1000,
         "data": [101,103,102,104]
     },
     {
         "name": "House",
         "width": 1,
         "height": 1,
+        "cost": 100,
         "data": [100]
     },
     {
         "name": "Town Hall",
         "width": 1,
         "height": 2,
+        "cost": 1000,
         "data": [107,106]
     },
     {
         "name": "Park",
         "width": 1,
         "height": 2,
+        "cost": 500,
         "data": [109,108]
+    },
+    {
+        "name": "Bank",
+        "width": 1,
+        "height": 2,
+        "cost": 3000,
+        "data": [110]
     },
   ]
 }

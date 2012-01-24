@@ -31,6 +31,17 @@
             },
          "spacing":0,
          "tileheight":64,
+         "tileproperties":
+            {
+             "16":
+                {
+                 "buildable":"true"
+                },
+             "32":
+                {
+                 "buildable":"true"
+                }
+            },
          "tilewidth":128
         }, 
         {
@@ -39,7 +50,7 @@
          "imageheight":576,
          "imagewidth":3072,
          "margin":0,
-         "name":"2-rescue-tileset",
+         "name":"1-rescue-tileset",
          "properties":
             {
 

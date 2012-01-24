@@ -68,7 +68,7 @@ var world = function (spec, my) {
                     'tileset': tileset[tilesetId],
                     'offset': {
                         'x': my.data.tilesets[1].tilewidth/2,
-                        'y': my.data.tilesets[1].tileheight/2 + (tilesetId * 64),
+                        'y': my.data.tilesets[tilesetId*2 + 1].tileheight - my.data.tilesets[1].tileheight/2,
                     },
                 });
                 that.addChild(newTile);

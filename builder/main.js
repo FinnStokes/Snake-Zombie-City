@@ -13,8 +13,8 @@ jQuery(document).ready(function () {
     var scrollSpeed = 15;
     
     var cursor;
-    var buildings = jQuery.getJSON('/buildings.json', function () {
-        cursor = selector({'colour': Graphics.getRGB(255,255,0), 'city': city, 'buildings': buildings});
+    var buildings = jQuery.getJSON('/buildings.json', function (data) {
+        cursor = selector({'colour': Graphics.getRGB(255,255,0), 'city': city, 'buildings': data.buildings});
         stage.addChild(cursor);
     });
     
@@ -37,9 +37,19 @@ jQuery(document).ready(function () {
             } else if(stage.mouseY > canvas.height - 20) {
                 stage.y -= scrollSpeed;
             }
-        } else if (cursor) {
-            cursor.hide();
         }
     };
+
+    stage.onMouseDown = function (event) {
+        cursor.place();
+    }
+    
+    var resize = function () {
+	    canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener('resize', resize, false);
     Ticker.addListener(update);
+    resize();
 });

@@ -1,9 +1,10 @@
 var world = function (spec, my) {
-    var that, tileset;
+    var that, tileset, tiles;
     my = my || {};
     
     that = new Container();
     tileset = [];
+    tiles = [];
     
     that.load = function () {
         spec.socket.emit('getcity');
@@ -54,17 +55,34 @@ var world = function (spec, my) {
     }
 
     that.tileAt = function (x, y) {
+        if (!my.data) {
+            return {'x': 0, 'y': 0};
+        }
         var pos = {};
         pos.x = Math.floor(y / my.data.tilesets[0].tileheight +
                            x / my.data.tilesets[0].tilewidth + 1/2);
         pos.y = Math.floor(y / my.data.tilesets[0].tileheight -
                            x / my.data.tilesets[0].tilewidth + 1/2);
-        //if(pos.x < 0 || pos.y < 0 ||
-        //   pos.x >= my.data.layers[0].width ||
-        //   pos.y >= my.data.layers[0].height) {
-        //    return null;
-        //}
         return pos;
+    }
+
+    that.hasProperty = function (x, y, property) {
+        var index = x + (y * my.data.layers[0].width);
+        var gid = my.data.layers[0].data[index];
+        var tilesetId = gid < my.data.tilesets[2].firstgid ? 0 : 2;
+        gid -= my.data.tilesets[tilesetId].firstgid;
+        if(my.data.tilesets[tilesetId].tileproperties &&
+           my.data.tilesets[tilesetId].tileproperties[gid] &&
+           my.data.tilesets[tilesetId].tileproperties[gid][property]) {
+            return true;
+        }
+        return false;
+    }
+
+    that.setTile = function (x, y, id) {
+        var index = x + (y * my.data.layers[0].width);
+        my.data.layers[0].data[index] = id;
+        tiles[index].spriteSheet;
     }
     
     var render = function () {
@@ -85,6 +103,7 @@ var world = function (spec, my) {
                         'y': my.data.tilesets[tilesetId*2].tileheight - my.data.tilesets[0].tileheight/2,
                     },
                 });
+                tiles[index] = newTile;
                 that.addChild(newTile);
             }
         }

@@ -60,25 +60,20 @@ jQuery(document).ready(function () {
 		}
 		midX = (minX + maxX) / 2;
 		midY = (minY + maxY) / 2;
-		/*for (var i = 0; i < players.length; ++i) {
-			midX += players[i].x;
-			midY += players[i].y;
-		}
-		midX /= players.length;
-		midY /= players.length;*/
 		
 		stage.x = (canvas.width / 2) - midX;
 		stage.y = (canvas.height / 2) - midY;
 		
         stage.update();
     };
-    window.addEventListener('resize', resize, false);
-    Ticker.addListener(update);
-    resize();
     
-    function resize() {
+    var resize = function () {
 	    canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     };
+
+    window.addEventListener('resize', resize, false);
+    Ticker.addListener(update);
+    resize();
 });
 

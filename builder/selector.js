@@ -6,15 +6,15 @@ var selector = function (spec, my) {
     that.visible = false;
 
     var buildings = spec.buildings;
-    var building = 0;
+    var building = 3;
 
     that.alpha = spec.alpha || 0.5;
 
     that.graphics.beginFill(spec.colour);
-    that.graphics.moveTo(-0.5,0);
+    that.graphics.moveTo(-buildings[building].width * 0.5, (buildings[building].height - 1) * 0.5);
     that.graphics.lineTo(0,-0.5);
-    that.graphics.lineTo(my.width - 0.5,0);
-    that.graphics.lineTo(0,my.height - 0.5);
+    that.graphics.lineTo(buildings[building].width * 0.5, (buildings[building].height - 1) * 0.5);
+    that.graphics.lineTo(0,buildings[building].height - 0.5);
     that.graphics.closePath();
     that.graphics.endFill();
 
@@ -22,7 +22,7 @@ var selector = function (spec, my) {
     var pos;
 
     var inBounds = function (checkPos) {
-	return checkPos && checkPos.x > 0 && checkPos.y > 0 && checkPos.x + buildings[building].width <= city.width() && checkPos.y + buildings[building].height <= city.height();
+	return checkPos && checkPos.x >= 0 && checkPos.y >= 0 && checkPos.x + buildings[building].width <= city.width() && checkPos.y + buildings[building].height <= city.height();
     }
 
     that.moveTo = function (newPos) {
@@ -37,24 +37,25 @@ var selector = function (spec, my) {
     }
     
     that.place = function () {
-	if(inBounds(pos)) {
-	    clear = true;
-	    for (var x = 0; x < buildings[building].width; ++x) {
-		for (var y = 0; y < buildings[building].height; ++y) {
-		    if (!city.hasProperty(pos.x + x, pos.y + y, 'buildable')) {
-			clear = false;
-			break;
-		    }
-		}
+	    if(inBounds(pos)) {
+	        clear = true;
+	        for (var x = 0; x < buildings[building].width; ++x) {
+		        for (var y = 0; y < buildings[building].height; ++y) {
+		            if (!city.hasProperty(pos.x + x, pos.y + y, 'buildable')) {
+			            clear = false;
+			            break;
+		            }
+		        }
+	        }
+            console.log(clear);
+	        if (clear) {
+		        for (var x = 0; x < buildings[building].width; ++x) {
+		            for (var y = 0; y < buildings[building].height; ++y) {
+			            city.setTile(pos.x + x, pos.y + y, buildings[building].data[x + y * buildings[building].width]);
+		            }
+		        }
+	        }
 	    }
-	    if (clear) {
-		for (var x = 0; x < buildings[building].width; ++x) {
-		    for (var y = 0; y < buildings[building].height; ++y) {
-			city.setTile(pos.x + x, pos.y + y, buildings[building].data[x + y * buildings[building].width]);
-		    }
-		}
-	    }
-	}
     }
     
     that.hide = function () {

@@ -1,16 +1,32 @@
 var enemy = function (spec, my) {
-    var that, health;
+    var that, type, health, heading, speed, turnSpeed;
     my = my || {};
     
     that = new Shape();
+    type = spec.type;
     health = 2;
+    heading = 0;
+    if (type === "snombie") {
+		speed = 1.3;
+	    turnSpeed = 0.5;
+	} else if (type === "civilian") {
+		speed = 0.7;
+		turnSpeed = 1;
+	}
     
-    (function () {
+    that.render = function () {
         var s = that;
         var g = s.graphics;
         
-        g.beginFill("#224466").drawCircle(0, 0, 8);
-    }());
+        g.clear();
+        if (type === "snombie") {
+			g.beginFill("purple");
+		} else if (type === "civilian") {
+			g.beginFill("green");
+		}
+        g.drawCircle(0, 0, 8);
+    };
+    that.render();
     
     EVENT.subscribe("enemy.hit", function (e) {
 		if (e.enemy == that) {
@@ -22,32 +38,93 @@ var enemy = function (spec, my) {
 		}
 	});
 	
+	that.infect = function () {
+		type = "snombie";
+		this.render();
+	}
+	
+	that.isCivilian = function () {
+		return type === "civilian";
+	}
+	
+	that.isSnombie = function () {
+		return type === "snombie";
+	}
+	
 	that.tick = function () {
+		var velX = 0, velY = 0;
+		
 		// Get the nearest player
-		var maxDist = Number.MAX_VALUE, dist = Number.MAX_VALUE, idx = -1, dx, dy, n;
+		var minDist = Number.MAX_VALUE, dist = Number.MAX_VALUE, idx = -1, dx, dy, n;
 		for (var i = 0; i < players.length; ++i) {
 			dist = Math.pow(players[i].x - this.x, 2) +
-				Math.pow(players[i].y - this.y, 2)
-			if (dist < maxDist) {
-				maxDist = dist;
+				Math.pow(players[i].y - this.y, 2);
+			if (dist < minDist) {
+				minDist = dist;
 				idx = i;
-			}
-			if (idx == -1) {
-				console.log(dist + " -- " + maxDist);
-				console.log(players[i].x + ", " + players[i].y);
-				console.log(this.x + ", " + this.y);
 			}
 		}
 		
 		// Move towards them
-		dx = players[idx].x - this.x;
-		dy = players[idx].y - this.y;
-		n = Math.sqrt(dx * dx + dy * dy);		
-		
-		if (n != 0) {
-			this.x += dx / n;
-			this.y += dy / n;
+		if (minDist < 192 * 192) {
+			dx = players[idx].x - this.x;
+			dy = players[idx].y - this.y;
+			n = Math.sqrt(dx * dx + dy * dy);		
+			
+			if (n != 0) {
+				velX = dx / n;
+				velY = dy / n;
+			}
 		}
+		
+		// Snombie/civilian interactions
+		minDist = Number.MAX_VALUE, dist = Number.MAX_VALUE, idx = -1, dx, dy, n;
+		for (var i = 0; i < enemies.length; ++i) {
+			dist = Math.pow(enemies[i].x - this.x, 2) +
+				Math.pow(enemies[i].y - this.y, 2);
+			if (type === "snombie") {
+				if (enemies[i].isCivilian()) {
+					if (dist < 16 * 16) {
+						enemies[i].infect();
+					} else {
+						if (dist < minDist) {
+							minDist = dist;
+							idx = i;
+						}
+					}
+				}
+			} else if (type === "civilian") {
+				if (enemies[i].isSnombie()) {
+					if (dist < minDist) {
+						minDist = dist;
+						idx = i;
+					}
+				}
+			}
+		}
+		if (minDist < 192 * 192) {
+			dx = enemies[idx].x - this.x;
+			dy = enemies[idx].y - this.y;
+			n = Math.sqrt(dx * dx + dy * dy);		
+			
+			if (n != 0) {
+				velX = dx / n;
+				velY = dy / n;
+			}
+			
+			if (type === "civilian") {
+				velX = -velX;
+				velY = -velY;
+			}
+		}
+		if (type === "snombie" && velX === 0 && velY === 0) {
+			heading += (Math.random() * 2 - 1) * turnSpeed;
+			velX = Math.cos(heading);
+			velY = Math.sin(heading);
+		}
+		
+		this.x += velX * speed;
+		this.y += velY * speed;
 	};
     
     return that;

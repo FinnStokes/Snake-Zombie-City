@@ -27,12 +27,15 @@ var world = function (spec, my) {
     
     that.getTile = function (x, y) {
         var tile = that.tileAt(x, y);
-        var index = tile.x + (tile.y * my.data.layers[0].width);
+        if (tile) {
+            var index = tile.x + (tile.y * my.data.layers[0].width);
 
-        if (!tile) {
-            return null;
+            if (!tile) {
+                return null;
+            }
+            return my.data.layers[0].data[index];
         }
-        return my.data.layers[0].data[index];
+        return null;
     }
 
     that.tileAt = function (x, y) {

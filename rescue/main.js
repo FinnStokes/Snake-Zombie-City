@@ -1,4 +1,4 @@
-var socket = io.connect('/:49990');
+var socket = io.connect('/rescue');
 
 jQuery(document).ready(function () {
     socket.emit('getcity');

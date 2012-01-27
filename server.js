@@ -1,8 +1,10 @@
 var app = require('express').createServer();
 var fs  = require('fs');
 
-var builderIo = require('socket.io').listen(49989);
-var rescueIo   = require('socket.io').listen(49990);
+var io = require('socket.io').listen(app);
+
+var builderIo = io.of('/builder');
+var rescueIo = io.of('/rescue');
 
 var city   = require('./city.js');
 var player = require('./player.js');
@@ -24,6 +26,20 @@ var serveFile = function (req, res, path, mimetype) {
 		res.end(data, 'utf-8');
 	})
 };
+
+app.get('/:file.:ext', function (req, res){
+    console.log(req.url);
+    req.params.file = 'easel';
+    req.params.ext = 'js';
+    serveFile(req, res, '/lib/');
+});
+
+app.get('/builder/', function (req, res){
+    console.log(req.url);
+    req.params.file = 'index';
+    req.params.ext = 'html';
+    serveFile(req, res, '/builder/');
+});
 
 app.get('/builder/', function (req, res){
     console.log(req.url);
@@ -71,7 +87,8 @@ app.get('/rescue/img/tileset/:file.:ext', function (req, res){
 
 app.listen(80);
 
-builderIo.sockets.on('connection', function (socket) {
+builderIo.on('connection', function (socket) {
+    console.log('connect');
 	var p = player.create({'socket': socket});
 		
 	socket.on('disconnect', function () {
@@ -89,6 +106,7 @@ builderIo.sockets.on('connection', function (socket) {
 	});
 
 	socket.on('getcity', function () {
+        console.log('get');
 		if (p.city === null) {
 			p.city = city.random('ruined');
 		}
@@ -96,7 +114,7 @@ builderIo.sockets.on('connection', function (socket) {
 	});
 });
 
-rescueIo.sockets.on('connection', function (socket) {
+rescueIo.on('connection', function (socket) {
 	var p = player.create({'socket': socket});
 		
 	socket.on('disconnect', function () {
@@ -115,6 +133,7 @@ rescueIo.sockets.on('connection', function (socket) {
 
 	socket.on('getcity', function () {
 		if (p.city === null) {
+		    console.log('rand');
 			p.city = city.random('infected');
 		}
 		socket.emit('city', city.get('infected',p.city));

@@ -3,7 +3,7 @@ exports.create = function(spec,my) {
 	my = my || {};
 	
 	that = {};
-	city = spec.city || null;
+	that.city = spec.city || null;
 
 	return that;
 }

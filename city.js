@@ -14,6 +14,14 @@ exports.random = function (type) {
 	}
 };
 
+exports.get = function(type, id) {
+	if (cities[type]) {
+	    return cities[type].data[id];
+	} else {
+	    return null;
+	}
+};
+
 exports.free = function(type, id) {
 	if (cities[type] && cities[type].data[id]) {
 		cities[type].free.push(id);

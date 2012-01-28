@@ -19,6 +19,10 @@ var world = function (spec, my) {
         spec.socket.emit('setcity', my.data);
         delete my.data;
     };
+    
+    that.collidePoint = function (x, y) {
+        return that.tileAt(x, y) > 0;
+    }
 
     that.tileAt = function (x, y) {
         var pos = {};

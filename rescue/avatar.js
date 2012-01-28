@@ -23,6 +23,11 @@ var avatar = function (spec, my) {
 	that.tick = function () {
 		this.x += velX;
 		this.y += velY;
+		
+		if (city.collidePoint(this.x, this.y)) {
+			this.x -= velX;
+			this.y -= velY;
+		}
 	};
     
     return that;

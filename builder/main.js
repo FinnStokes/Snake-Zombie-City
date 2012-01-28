@@ -37,7 +37,7 @@ jQuery(document).ready(function () {
             } else if(stage.mouseY > canvas.height - 20) {
                 stage.y -= scrollSpeed;
             }
-        } else {
+        } else if (cursor) {
             cursor.hide();
         }
     };

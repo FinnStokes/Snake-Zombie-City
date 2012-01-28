@@ -14,7 +14,7 @@ jQuery(document).ready(function () {
     
     var cursor;
     var buildings = jQuery.getJSON('/buildings.json', function () {
-        cursor = selector({'colour': Graphics.getRGB(255,255,0,0.50), 'city': city, 'buildings': buildings});
+        cursor = selector({'colour': Graphics.getRGB(255,255,0), 'city': city, 'buildings': buildings});
         stage.addChild(cursor);
     });
     

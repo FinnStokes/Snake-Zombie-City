@@ -5,18 +5,29 @@ var selector = function (spec, my) {
     that = new Shape();
     that.visible = false;
 
- 	that.graphics.beginFill(spec.colour);
- 	that.graphics.moveTo(-0.5,0);
- 	that.graphics.lineTo(0,-0.5);
- 	that.graphics.lineTo(0.5,0);
- 	that.graphics.lineTo(0,0.5);
- 	that.graphics.closePath();
- 	that.graphics.endFill();
+    var buildings = spec.buildings;
+    var building = 0;
+
+    that.alpha = spec.alpha || 0.5;
+
+    that.graphics.beginFill(spec.colour);
+    that.graphics.moveTo(-0.5,0);
+    that.graphics.lineTo(0,-0.5);
+    that.graphics.lineTo(my.width - 0.5,0);
+    that.graphics.lineTo(0,my.height - 0.5);
+    that.graphics.closePath();
+    that.graphics.endFill();
 
     var city = spec.city;
+    var pos;
 
-    that.moveTo = function (pos) {
-        if(pos) {
+    var inBounds = function (checkPos) {
+	return checkPos && checkPos.x > 0 && checkPos.y > 0 && checkPos.x + buildings[building].width <= city.width() && checkPos.y + buildings[building].height <= city.height();
+    }
+
+    that.moveTo = function (newPos) {
+        if(inBounds(newPos)) {
+	    pos = newPos;
             that.x = (pos.x - pos.y) * city.tileWidth() / 2;
             that.y = (pos.x + pos.y) * city.tileHeight() / 2;
             that.scaleX = city.tileWidth();
@@ -24,7 +35,28 @@ var selector = function (spec, my) {
             that.visible = true;
         }
     }
-
+    
+    that.place = function () {
+	if(inBounds(pos)) {
+	    clear = true;
+	    for (var x = 0; x < buildings[building].width; ++x) {
+		for (var y = 0; y < buildings[building].height; ++y) {
+		    if (!city.hasProperty(pos.x + x, pos.y + y, 'buildable')) {
+			clear = false;
+			break;
+		    }
+		}
+	    }
+	    if (clear) {
+		for (var x = 0; x < buildings[building].width; ++x) {
+		    for (var y = 0; y < buildings[building].height; ++y) {
+			city.setTile(pos.x + x, pos.y + y, buildings[building].data[x + y * buildings[building].width]);
+		    }
+		}
+	    }
+	}
+    }
+    
     that.hide = function () {
         that.visible = false;
     }

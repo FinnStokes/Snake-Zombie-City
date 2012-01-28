@@ -1,5 +1,5 @@
 var avatar = function (spec, my) {
-    var that, player, velX, velY;
+    var that, player, velX, velY, facing;
     my = my || {};
     
     that = new Shape();
@@ -7,6 +7,7 @@ var avatar = function (spec, my) {
     colour = spec.colour;
     velX = 0;
     velY = 0;
+    facing = "right";
     
     (function () {
         var s = that;
@@ -16,8 +17,37 @@ var avatar = function (spec, my) {
     }());
     
     EVENT.subscribe(player+".move", function (e) {
-		velX = e.x * 10;
-		velY = e.y * 10;
+        if (e.x !== 0 || e.y !== 0) {
+            if (e.x > 0) {
+                facing = "right";
+            } else if (e.x < 0) {
+                facing = "left";
+            }
+            if (e.y > 0) {
+                facing = "down";
+            } else if (e.y < 0) {
+                facing = "up";
+            }
+        }
+        
+		velX = e.x * 8;
+		velY = e.y * 8;
+	});
+    
+    EVENT.subscribe(player+".shoot", function (e) {
+        var velX = 0, velY = 0;
+        if (facing === "right") {
+            velX = 1;
+        } else if (facing === "left") {
+            velX = -1;
+        } else if (facing === "down") {
+            velY = 1;
+        } else if (facing === "up") {
+            velY = -1;
+        }
+        
+		var b = bullet({x: that.x, y: that.y, velX: velX, velY: velY});
+        stage.addChild(b);
 	});
 	
 	that.tick = function () {

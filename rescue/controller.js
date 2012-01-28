@@ -24,6 +24,8 @@ var KEYCODE_NUMPAD_7 = 103;
 var KEYCODE_NUMPAD_8 = 104;
 var KEYCODE_NUMPAD_9 = 105;
 
+var keyShift = false;
+var keyCtrl = false;
 var keySpace = false;
 
 var keyLeft = false;
@@ -58,6 +60,8 @@ function onKeyDown(key) {
     //cross browser issues exist
     if(!key){ var key = window.event; }
     switch(key.keyCode) {
+        case KEYCODE_SHIFT: keyShift = true; break;
+        case KEYCODE_CTRL: keyCtrl = true; break;
         case KEYCODE_SPACE: keySpace = true; break;
         
         case KEYCODE_LEFT: keyLeft = true; break;
@@ -92,6 +96,8 @@ function onKeyUp(key) {
     //cross browser issues exist
     if(!key){ var key = window.event; }
     switch(key.keyCode) {
+        case KEYCODE_SHIFT: keyShift = false; break;
+        case KEYCODE_CTRL: keyCtrl = false; break;
         case KEYCODE_SPACE: keySpace = false; break;
         
         case KEYCODE_LEFT: keyLeft = false; break;
@@ -123,13 +129,13 @@ function onKeyUp(key) {
 }
 
 function update() {
-    update_player("p1", keyD, keyW, keyA, keyS);
-    update_player("p2", keyK, keyU, keyH, keyJ);
-    update_player("p3", keyRight, keyUp, keyLeft, keyDown);
-    update_player("p4", keyNumpad6, keyNumpad8, keyNumpad4, keyNumpad5);
+    update_player("p1", keyD, keyW, keyA, keyS, keyE);
+    update_player("p2", keyK, keyU, keyH, keyJ, keyI);
+    update_player("p3", keyRight, keyUp, keyLeft, keyDown, keyShift);
+    update_player("p4", keyNumpad6, keyNumpad8, keyNumpad4, keyNumpad5, keyNumpad9);
 }
 
-function update_player(player, right, up, left, down) {
+function update_player(player, right, up, left, down, shoot) {
     // Update player commands
     var x = 0, y = 0;
     
@@ -158,4 +164,9 @@ function update_player(player, right, up, left, down) {
     
     // Notify player of new movement
     EVENT.notify(player+".move", {x: x, y: y});
+    
+    // Update player actions
+    if (shoot) {
+        EVENT.notify(player+".shoot", {});
+    }
 }

@@ -21,7 +21,17 @@ var world = function (spec, my) {
     };
     
     that.collidePoint = function (x, y) {
-        return that.tileAt(x, y) > 0;
+        return that.getTile(x, y) == 1;
+    }
+    
+    that.getTile = function (x, y) {
+        var tile = that.tileAt(x, y);
+        var index = tile.x + (tile.y * my.data.layers[0].width);
+
+        if (!tile) {
+            return null;
+        }
+        return my.data.layers[0].data[index];
     }
 
     that.tileAt = function (x, y) {

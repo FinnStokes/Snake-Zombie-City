@@ -1,5 +1,5 @@
 var avatar = function (spec, my) {
-    var that, player, velX, velY, facing;
+    var that, player, velX, velY, facing, score;
     my = my || {};
     
     that = new Shape();
@@ -8,6 +8,7 @@ var avatar = function (spec, my) {
     velX = 0;
     velY = 0;
     facing = "right";
+    score = 0;
     
     (function () {
         var s = that;
@@ -47,8 +48,20 @@ var avatar = function (spec, my) {
         }
         
 		var b = bullet({x: that.x, y: that.y, velX: velX, velY: velY});
-        stage.addChild(b);
+        camera.addChild(b);
 	});
+    
+    that.addScore = function (value) {
+        score += value;
+    }
+    
+    that.getScore = function () {
+        return score;
+    }
+    
+    that.setScore = function (value) {
+        score = value;
+    }
 	
 	that.tick = function () {
 		this.x += velX;

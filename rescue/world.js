@@ -5,6 +5,9 @@ var world = function (spec, my) {
     that = new Container();
     tileset = [];
     
+    that.width = 0;
+    that.height = 0;
+    
     that.load = function () {
         spec.socket.emit('getcity');
     };
@@ -12,6 +15,7 @@ var world = function (spec, my) {
     spec.socket.on('city', function (newCity) {
         if(!my.data) {
             my.data = newCity;
+            EVENT.notify("world.loaded",{});
             load();
         }
     });
@@ -22,20 +26,36 @@ var world = function (spec, my) {
     };
     
     that.collidePoint = function (x, y) {
-        return that.getTile(x, y) == 1;
-    }
-    
-    that.getTile = function (x, y) {
         var tile = that.tileAt(x, y);
         if (tile) {
-            var index = tile.x + (tile.y * my.data.layers[0].width);
-
-            if (!tile) {
-                return null;
-            }
-            return my.data.layers[0].data[index];
+            return that.hasProperty(tile.x, tile.y, "solid");
         }
-        return null;
+    }
+
+    that.getSpawn = function () {
+        if (my.data === undefined) {
+            return null;
+        }
+        for (var x = 0; x < my.data.layers[0].width; ++x) {
+            for (var y = 0; y < my.data.layers[0].height; ++y) {
+                if (that.hasProperty(x, y, "spawn")) { 
+                    return {x: x, y: y};
+                }
+            }
+        }
+    }
+
+    that.hasProperty = function (x, y, property) {
+        var index = x + (y * my.data.layers[0].width);
+        var gid = my.data.layers[0].data[index];
+        var tilesetId = gid < my.data.tilesets[2].firstgid ? 1 : 3;
+        gid -= my.data.tilesets[tilesetId-1].firstgid;
+        if (my.data.tilesets[tilesetId].tileproperties &&
+                my.data.tilesets[tilesetId].tileproperties[gid] &&
+                my.data.tilesets[tilesetId].tileproperties[gid][property]) {
+            return true;
+        }
+        return false;
     }
 
     that.tileAt = function (x, y) {
@@ -57,6 +77,9 @@ var world = function (spec, my) {
     }
     
     var render = function () {
+        that.width = my.data.layers[0].width;
+        that.height = my.data.layers[0].height;
+        
         that.removeAllChildren();
         for (var y = 0; y < my.data.layers[0].height; ++y) {
             for (var x = 0; x < my.data.layers[0].width; ++x) {

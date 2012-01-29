@@ -32,15 +32,26 @@ var enemy = function (spec, my) {
 		if (e.enemy == that) {
 			health -= e.damage;
 			if (health <= 0) {
-				stage.removeChild(that);
+				if (type === "snombie") {
+					EVENT.notify("game.score", {score: 5});
+				}
+				camera.removeChild(that);
 	            enemies.splice(enemies.indexOf(that), 1);
 			}
+		}
+	});
+	
+	EVENT.subscribe("enemy.kill", function (e) {
+		if (e.enemy == that) {
+			camera.removeChild(that);
+	        enemies.splice(enemies.indexOf(that), 1);
 		}
 	});
 	
 	that.infect = function () {
 		type = "snombie";
 		this.render();
+		EVENT.notify("game.score", {score: -10});
 	}
 	
 	that.isCivilian = function () {
@@ -53,6 +64,15 @@ var enemy = function (spec, my) {
 	
 	that.tick = function () {
 		var velX = 0, velY = 0;
+		
+		// Rescue civilians
+		if (type === "civilian") {
+			var tile = city.tileAt(this.x, this.y);
+			if (tile && city.hasProperty(tile.x, tile.y, "safe")) {
+				EVENT.notify("enemy.kill", {enemy: this});
+				EVENT.notify("game.score", {score: 100});
+			}
+		}
 		
 		// Get the nearest player
 		var minDist = Number.MAX_VALUE, dist = Number.MAX_VALUE, idx = -1, dx, dy, n;
@@ -123,8 +143,14 @@ var enemy = function (spec, my) {
 			velY = Math.sin(heading);
 		}
 		
-		this.x += velX * speed;
-		this.y += velY * speed;
+		var newX = this.x + velX * speed;
+		var newY = this.y + velY * speed;
+		if (city.collidePoint(newX, newY)) {
+			heading += Math.PI;
+		} else {
+			this.x = newX;
+			this.y = newY;
+		}
 	};
     
     return that;

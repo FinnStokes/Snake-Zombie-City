@@ -3,8 +3,8 @@ var fs = require('fs');
 var cities = {};
 
 var premade = {
-    'infected': ['test.json'],
-    'ruined': ['test.json'],
+    'infected': ['rescue.json'],
+    'ruined': ['builder.json'],
 }
 
 exports.random = function (type, done) {

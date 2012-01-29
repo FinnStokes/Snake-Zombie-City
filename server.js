@@ -27,10 +27,15 @@ var serveFile = function (req, res, path, mimetype) {
 	            });
 };
 
+app.get('/buildings.json', function (req, res){
+    console.log(req.url);
+    req.params.file = 'buildings';
+    req.params.ext = 'json';
+    serveFile(req, res, '/');
+});
+
 app.get('/:file.:ext', function (req, res){
     console.log(req.url);
-    req.params.file = 'easel';
-    req.params.ext = 'js';
     serveFile(req, res, '/lib/');
 });
 

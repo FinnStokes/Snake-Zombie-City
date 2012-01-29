@@ -1,5 +1,5 @@
 var canvas, stage, socket;
-
+var splash, splashTime;
 var camera, city, players, enemies;
 
 jQuery(document).ready(function () {
@@ -112,6 +112,16 @@ jQuery(document).ready(function () {
 	score[3].y = window.innerHeight - 10;
     stage.addChild(score[3]);
     
+    splash = new Container();
+    bg = new Shape();
+    bg.graphics.beginFill('black').drawRect(0, 0, window.innerWidth, window.innerHeight);
+    splash.addChild(bg);
+    bmp = new Bitmap("/rescue/img/splash.png");
+    bmp.x = (window.innerWidth - 1024) / 2;
+    splash.addChild(bmp);
+    stage.addChild(splash);
+    splashTime = 40;
+    
     EVENT.subscribe("game.score", function (e) {
 		console.log(e.player);
 		if (e.player !== undefined) {
@@ -122,6 +132,13 @@ jQuery(document).ready(function () {
 
     var update = {};
     update.tick = function () {
+        if (splashTime > 0) {
+            --splashTime;
+            if (splashTime == 0) {
+                stage.removeChild(splash);
+            }
+        }
+        
 		// Update camera
 		var midX = 0, midY = 0;
 		var minX = Number.MAX_VALUE, minY = Number.MAX_VALUE;

@@ -16,19 +16,19 @@ jQuery(document).ready(function () {
     
     players = [];
     
-    var p1 = avatar({player: "p1", colour: "#ff0000", x: 1, y: 1});
+    var p1 = avatar({player: "p1", colour: "#ff0000", x: 1, y: 1, playerNum: 0});
     players.push(p1);
     camera.addChild(p1);
     
-    var p2 = avatar({player: "p2", colour: "#00ff00", x: 1, y: 1});
+    var p2 = avatar({player: "p2", colour: "#00ff00", x: 1, y: 1, playerNum: 1});
     players.push(p2);
     camera.addChild(p2);
     
-    var p3 = avatar({player: "p3", colour: "#0000ff", x: 1, y: 1});
+    var p3 = avatar({player: "p3", colour: "#0000ff", x: 1, y: 1, playerNum: 2});
     players.push(p3);
     camera.addChild(p3);
     
-    var p4 = avatar({player: "p4", colour: "#ffffff", x: 1, y: 1});
+    var p4 = avatar({player: "p4", colour: "#ffffff", x: 1, y: 1, playerNum: 3});
     players.push(p4);
     camera.addChild(p4);
     
@@ -54,35 +54,70 @@ jQuery(document).ready(function () {
         enemies = [];
  
 	    // Spawn enemies
-		/*			console.log(city.width);
-					console.log(city.height);
 	    for (var x = 0; x < city.width; ++x) {
 			for (var y = 0; y < city.height; ++y) {
 				if (city.hasProperty(x, y, "snombie")) {
-					console.log("add snombie");
 					var e = enemy({type: "snombie"});
 					enemies.push(e);
 					e.x = 192 * x;
 					e.y = 192 * y;
 					camera.addChild(e);
 				} else if (city.hasProperty(x, y, "civilian")) {
-					console.log("add civilian");
 					var e = enemy({type: "civilian"});
 					enemies.push(e);
-					e.x = 192 * x;
-					e.y = 192 * y;
+					e.x = 192 * x - 32;
+					e.y = 192 * y - 32;
+					camera.addChild(e);
+
+					var e = enemy({type: "civilian"});
+					enemies.push(e);
+					e.x = 192 * x - 32;
+					e.y = 192 * y + 32;
+					camera.addChild(e);
+					
+					var e = enemy({type: "civilian"});
+					enemies.push(e);
+					e.x = 192 * x + 32;
+					e.y = 192 * y - 32;
+					camera.addChild(e);
+
+					var e = enemy({type: "civilian"});
+					enemies.push(e);
+					e.x = 192 * x + 32;
+					e.y = 192 * y + 32;
 					camera.addChild(e);
 				}
 			}
-		}*/
+		}
 	});
 	
-	var scoreText = new Text("0", "32px sans-serif", "#ffffff");
-	scoreText.x = 10;
-	scoreText.y = 30;
-    stage.addChild(scoreText);
+	var score = [];
+	score[0] = new Text("0", "32px sans-serif", "#ffffff");
+	score[0].x = 10;
+	score[0].y = 30;
+    stage.addChild(score[0]);
+    
+    score[1] = new Text("0", "32px sans-serif", "#ffffff");
+	score[1].x = window.innerWidth - 120;
+	score[1].y = 30;
+    stage.addChild(score[1]);
+    
+    score[2] = new Text("0", "32px sans-serif", "#ffffff");
+	score[2].x = 10;
+	score[2].y = window.innerHeight - 10;
+    stage.addChild(score[2]);
+    
+    score[3] = new Text("0", "32px sans-serif", "#ffffff");
+	score[3].x = window.innerWidth - 120;
+	score[3].y = window.innerHeight - 10;
+    stage.addChild(score[3]);
+    
     EVENT.subscribe("game.score", function (e) {
-		scoreText.text = parseInt(scoreText.text) + e.score;
+		console.log(e.player);
+		if (e.player !== undefined) {
+			players[e.player].addScore(e.score);
+			score[e.player].text = players[e.player].getScore();
+		}
 	});
 
     var update = {};

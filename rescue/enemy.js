@@ -1,9 +1,10 @@
 var enemy = function (spec, my) {
-    var that, type, health, heading, speed, turnSpeed;
+    var that, type, subType, health, heading, speed, turnSpeed, player;
     my = my || {};
     
-    that = new Shape();
+    that = new Container();
     type = spec.type;
+    subType = spec.subType || Math.floor(Math.random()*4);
     health = 2;
     heading = 0;
     if (type === "snombie") {
@@ -13,27 +14,40 @@ var enemy = function (spec, my) {
 		speed = 0.7;
 		turnSpeed = 1;
 	}
+	player = null;
     
+    var sprite;
     that.render = function () {
-        var s = that;
-        var g = s.graphics;
-        
-        g.clear();
-        if (type === "snombie") {
-			g.beginFill("purple");
-		} else if (type === "civilian") {
-			g.beginFill("green");
+		var frame = subType;
+        if (type === "civilian") {
+			frame += 4;
 		}
-        g.drawCircle(0, 0, 8);
+        sprite.gotoAndStop(frame);
     };
-    that.render();
+    
+    var img = new Image();
+    img.onload = function () {
+		var sheet = new SpriteSheet({
+            'images': [img],
+            'frames': {
+				'width': 40,
+				'height': 83,
+				'regX': 20,
+				'regY': 41,
+			},
+		});
+		sprite = new BitmapAnimation(sheet);
+		that.addChild(sprite);
+		that.render();
+	}
+	img.src = "/rescue/img/enemies.png";
     
     EVENT.subscribe("enemy.hit", function (e) {
 		if (e.enemy == that) {
 			health -= e.damage;
 			if (health <= 0) {
 				if (type === "snombie") {
-					EVENT.notify("game.score", {score: 5});
+					EVENT.notify("game.score", {score: 5, player: e.player});
 				}
 				camera.removeChild(that);
 	            enemies.splice(enemies.indexOf(that), 1);
@@ -51,7 +65,10 @@ var enemy = function (spec, my) {
 	that.infect = function () {
 		type = "snombie";
 		this.render();
-		EVENT.notify("game.score", {score: -10});
+		EVENT.notify("game.score", {score: -10, player: 0});
+		EVENT.notify("game.score", {score: -10, player: 1});
+		EVENT.notify("game.score", {score: -10, player: 2});
+		EVENT.notify("game.score", {score: -10, player: 3});
 	}
 	
 	that.isCivilian = function () {
@@ -70,7 +87,7 @@ var enemy = function (spec, my) {
 			var tile = city.tileAt(this.x, this.y);
 			if (tile && city.hasProperty(tile.x, tile.y, "safe")) {
 				EVENT.notify("enemy.kill", {enemy: this});
-				EVENT.notify("game.score", {score: 100});
+				EVENT.notify("game.score", {score: 100, player: player});
 			}
 		}
 		
@@ -84,9 +101,17 @@ var enemy = function (spec, my) {
 				idx = i;
 			}
 		}
+		// set owner as nearest player
+		player = idx;
 		
+		// Hurt them
+		if (minDist < 32 * 32 && type === "snombie") {
+			EVENT.notify("game.score", {score: -100, player: idx});
+			EVENT.notify("enemy.kill", {enemy: this});
+			return;
+		}
 		// Move towards them
-		if (minDist < 192 * 192) {
+		if (minDist < 256 * 256) {
 			dx = players[idx].x - this.x;
 			dy = players[idx].y - this.y;
 			n = Math.sqrt(dx * dx + dy * dy);		
@@ -122,7 +147,7 @@ var enemy = function (spec, my) {
 				}
 			}
 		}
-		if (minDist < 192 * 192) {
+		if (minDist < 256 * 256) {
 			dx = enemies[idx].x - this.x;
 			dy = enemies[idx].y - this.y;
 			n = Math.sqrt(dx * dx + dy * dy);		

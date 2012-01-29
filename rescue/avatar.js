@@ -1,21 +1,38 @@
 var avatar = function (spec, my) {
-    var that, player, velX, velY, facing, score;
+    var that, player, velX, velY, facing, score, playerNum;
     my = my || {};
     
-    that = new Shape();
+    that = new Container();
     player = spec.player;
     colour = spec.colour;
     velX = 0;
     velY = 0;
     facing = "right";
     score = 0;
+    playerNum = spec.playerNum;
     
-    (function () {
-        var s = that;
-        var g = s.graphics;
-        
-        g.beginFill(colour).drawCircle(0, 0, 16);
-    }());
+    var sprite;
+    that.render = function () {
+		var frame = playerNum;
+        sprite.gotoAndStop(frame);
+    };
+    
+    var img = new Image();
+    img.onload = function () {
+		var sheet = new SpriteSheet({
+            'images': [img],
+            'frames': {
+				'width': 38,
+				'height': 85,
+                'regX': 19,
+                'regY': 42,
+			},
+		});
+		sprite = new BitmapAnimation(sheet);
+		that.addChild(sprite);
+		that.render();
+	}
+	img.src = "/rescue/img/players.png";
     
     EVENT.subscribe(player+".move", function (e) {
         if (e.x !== 0 || e.y !== 0) {
@@ -47,7 +64,7 @@ var avatar = function (spec, my) {
             velY = -1;
         }
         
-		var b = bullet({x: that.x, y: that.y, velX: velX, velY: velY});
+		var b = bullet({x: that.x, y: that.y, velX: velX, velY: velY, owner: playerNum});
         camera.addChild(b);
 	});
     

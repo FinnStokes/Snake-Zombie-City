@@ -15,8 +15,10 @@ var world = function (spec, my) {
     spec.socket.on('city', function (newCity) {
         if(!my.data) {
             my.data = newCity;
-            EVENT.notify("world.loaded",{});
             load();
+            that.width = my.data.layers[0].width;
+            that.height = my.data.layers[0].height;
+            EVENT.notify("world.loaded",{});
         }
     });
     
@@ -76,10 +78,7 @@ var world = function (spec, my) {
                };
     }
     
-    var render = function () {
-        that.width = my.data.layers[0].width;
-        that.height = my.data.layers[0].height;
-        
+    var render = function () {        
         that.removeAllChildren();
         for (var y = 0; y < my.data.layers[0].height; ++y) {
             for (var x = 0; x < my.data.layers[0].width; ++x) {

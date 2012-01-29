@@ -58,8 +58,8 @@
     {
         "name": "Bank",
         "width": 1,
-        "height": 2,
-        "cost": 3000,
+        "height": 1,
+        "cost": 2000,
         "data": [110]
     },
   ]

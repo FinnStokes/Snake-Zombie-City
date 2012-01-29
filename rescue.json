@@ -130,7 +130,7 @@
          "firstgid":97,
          "image":"builder\/img\/building.png",
          "imageheight":256,
-         "imagewidth":1664,
+         "imagewidth":1792,
          "margin":0,
          "name":"2-builder-building",
          "properties":
@@ -143,11 +143,15 @@
             {
              "1":
                 {
-                 "purge":"1"
+                 "purge":"0.1"
                 },
              "11":
                 {
                  "protect":"0.9"
+                },
+             "13":
+                {
+                 "interest":"0.01"
                 },
              "2":
                 {
@@ -173,7 +177,7 @@
          "tilewidth":128
         }, 
         {
-         "firstgid":110,
+         "firstgid":111,
          "image":"rescue\/img\/building.png",
          "imageheight":256,
          "imagewidth":2688,

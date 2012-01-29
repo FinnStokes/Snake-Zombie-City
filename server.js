@@ -22,6 +22,7 @@ var serveFile = function (req, res, path, mimetype) {
 		            if (req.params.ext == 'css') mimetype = 'text/css';
 		            if (req.params.ext == 'js') mimetype = 'text/javascript';
 		            if (req.params.ext == 'png') mimetype = 'image/png';
+		            if (req.params.ext == 'json') mimetype = 'text/javascript';
 		            res.writeHead(200, { 'Content-Type': mimetype });
 		            res.end(data, 'utf-8');
 	            });

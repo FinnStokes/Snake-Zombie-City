@@ -94,15 +94,15 @@ var world = function (spec, my) {
 
     that.tick = function () {
         var sicken = 0.03;
-        var infect = 0.001*(1+Math.floor(spec.status.infected));
+        var infect = 0.0001*(50+Math.floor(spec.status.infected));
         var infectSick = infect*2;
+        var oldSick = spec.status.sick;
+        var oldInfected = spec.status.infected;
         for (var y = 0; y < my.data.layers[0].height; ++y) {
             for (var x = 0; x < my.data.layers[0].width; ++x) {
                 var index = x + (y * my.data.layers[0].width);
                 var gid = my.data.layers[0].data[index];
                 var tilesetId = gid < my.data.tilesets[2].firstgid ? 0 : 2;
-                var oldSick = spec.status.sick;
-                var oldInfected = spec.status.infected;
                 gid -= my.data.tilesets[tilesetId].firstgid;
                 if (my.data.tilesets[tilesetId].tileproperties &&
                     my.data.tilesets[tilesetId].tileproperties[gid]) {
@@ -128,7 +128,7 @@ var world = function (spec, my) {
                     }
                     if (my.data.tilesets[tilesetId].tileproperties[gid]["purge"]) {
                         var purge = parseInt(my.data.tilesets[tilesetId].tileproperties[gid]["purge"]);
-                        spec.status.infected -= purge/20;
+                        spec.status.infected -= purge*spec.status.infected/20;
                     }
                     if (my.data.tilesets[tilesetId].tileproperties[gid]["protect"]) {
                         var protect = parseInt(my.data.tilesets[tilesetId].tileproperties[gid]["protect"]);
@@ -139,8 +139,8 @@ var world = function (spec, my) {
                 }
             }
         }
-        spec.status.sick += spec.status.population * sicken / 20;
         if(spec.status.sick < 0) { spec.status.sick = 0; }
+        spec.status.sick += spec.status.population * sicken / 20;
         spec.status.population -= spec.status.sick - oldSick;
         spec.status.infected += spec.status.population * infect / 20;
         spec.status.population -= spec.status.infected - oldInfected;

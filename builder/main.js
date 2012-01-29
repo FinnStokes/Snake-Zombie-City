@@ -30,16 +30,24 @@ jQuery(document).ready(function () {
     
     var scrollSpeed = 15;
     
-    var cursor;
-    var buildings = jQuery.getJSON('/buildings.json', function (data) {
-        cursor = selector({
-            'colour': Graphics.getRGB(255,255,0),
-            'city': city,
-            'buildings': data.buildings,
-            'status': status,
-        });
-        city.addChild(cursor);
+    var cursor = selector({
+        'colour': Graphics.getRGB(255,255,0),
+        'city': city,
+        'status': status,
     });
+    var req = new XMLHttpRequest();
+    var buildings;
+    req.onreadystatechange = function () {
+        if (req.readyState == 4) {
+            if (req.status==200 || window.location.href.indexOf("http")==-1){
+                data = eval("("+req.responseText+")");
+                console.log("cursor");
+                cursor.buildings = data.buildings;
+            }
+        }
+    };
+    req.open("GET", "/buildings.json", true)
+    req.send(null)
     
     var update = {};
     update.tick = function () {
@@ -125,7 +133,8 @@ jQuery(document).ready(function () {
 	    canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     };
-                       
+    
+    stage.addChild(cursor);
     stage.addChild(statusDisplay({'status': status}));     
 
     window.addEventListener('resize', resize, false);

@@ -32,9 +32,17 @@ jQuery(document).ready(function () {
     enemies = [];
     
     for (var i = 0; i < 100; ++i) {
-		var e = enemy();
+		var e = enemy({type: "snombie"});
 		enemies.push(e);
 		e.x = i * 40;
+		stage.addChild(e);
+	}
+	
+	for (var i = 0; i < 100; ++i) {
+		var e = enemy({type: "civilian"});
+		enemies.push(e);
+		e.x = i * 40;
+		e.y = 400;
 		stage.addChild(e);
 	}
 
@@ -73,6 +81,7 @@ jQuery(document).ready(function () {
         stage.update();
     };
     window.addEventListener('resize', resize, false);
+    Ticker.setFPS(60);
     Ticker.addListener(update);
     resize();
     

@@ -6,7 +6,10 @@ var world = function (spec, my) {
     tileset = [];
     tiles = [];
     
-    that.load = function () {
+    var onLoaded;
+
+    that.load = function (callback) {
+        onLoaded = callback;
         spec.socket.emit('getcity');
     };
     
@@ -53,6 +56,22 @@ var world = function (spec, my) {
         } else {
             return 0;
         }
+    }
+
+    that.left = function () {
+        return -that.height() * that.tileWidth() / 2;
+    }
+
+    that.right = function () {
+        return that.width() * that.tileWidth() / 2;
+    }
+
+    that.top = function () {
+        return -that.tileHeight() / 2;
+    }
+
+    that.bottom = function () {
+        return (that.height() + that.width() - 1) * that.tileHeight() / 2;
     }
 
     that.tileAt = function (x, y) {
@@ -226,6 +245,10 @@ var world = function (spec, my) {
                --loaded;
                 if (loaded == 0) {
                     render();
+                    if (onLoaded) {
+                        onLoaded();
+                        onLoaded = null;
+                    }
                 }
             };
             
@@ -242,6 +265,10 @@ var world = function (spec, my) {
                 --loaded; 
                 if (loaded == 0) {
                     render();
+                    if (onLoaded) {
+                        onLoaded();
+                        onLoaded = null;
+                    }
                 }
             };
         }

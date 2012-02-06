@@ -13,131 +13,135 @@ jQuery(document).ready(function () {
     var canvas = jQuery('#game').get(0);
     var stage = new Stage(canvas);
     var socket = io.connect('/builder');
+    var res = resourceManager();
     
     canvas.width = 800;
     canvas.height = 600;
 
-    var status = {
-        "money": 2000,
-        "population": 0,
-        "sick": 0,
-        "infected": 0,
-    };
+    stage.addChild(res);
+
+    var status = {};
 
     var city = world({'socket': socket, 'status': status});
-    city.load();
-    stage.addChild(city);
+    res.load(city);
+
+    var buildings = jsonObject({'src': '/buildings.json'});
+    res.load(buildings);
+
+    console.log('loading');
+
+    res.onLoad(function () {
+        console.log('loaded');
+        status.money =  2000;
+        status.population = 0;
+        status.sick = 0;
+        status.infected = 0;
+        
+        var scrollSpeed = 15;
     
-    var scrollSpeed = 15;
+        var cursor = selector({
+            'colour': Graphics.getRGB(255,255,0),
+            'city': city,
+            'status': status,
+            'buildings': buildings.data.buildings,
+        });
     
-    var cursor = selector({
-        'colour': Graphics.getRGB(255,255,0),
-        'city': city,
-        'status': status,
-    });
-    var req = new XMLHttpRequest();
-    var buildings;
-    req.onreadystatechange = function () {
-        if (req.readyState == 4) {
-            if (req.status==200 || window.location.href.indexOf("http")==-1){
-                data = eval("("+req.responseText+")");
-                console.log("cursor");
-                cursor.buildings = data.buildings;
-            }
-        }
-    };
-    req.open("GET", "/buildings.json", true)
-    req.send(null)
-    
-    var update = {};
-    update.tick = function () {
-        stage.update();
-        if(stage.mouseInBounds) {
-            if(cursor){
-                cursor.moveTo(city.tileAt(stage.mouseX - city.x,
-                                          stage.mouseY - city.y));
-            }
+        var update = {};
+        update.tick = function () {
+            stage.update();
+            if(stage.mouseInBounds) {
+                if(cursor){
+                    cursor.moveTo(city.tileAt(stage.mouseX - city.x,
+                                              stage.mouseY - city.y));
+                }
             
-            if(stage.mouseX < 50) {
-                city.x += scrollSpeed;
-            } else if(stage.mouseX > canvas.width - 20) {
-                city.x -= scrollSpeed;
-            }
-            if(stage.mouseY < 50) {
-                city.y += scrollSpeed;
-            } else if(stage.mouseY > canvas.height - 20) {
-                city.y -= scrollSpeed;
-            }
-        }
-    };
+                if(stage.mouseX < 50) {
+                    city.x += scrollSpeed;
+                } else if(stage.mouseX > canvas.width - 20) {
+                    city.x -= scrollSpeed;
+                }
+                if(stage.mouseY < 50) {
+                    city.y += scrollSpeed;
+                } else if(stage.mouseY > canvas.height - 20) {
+                    city.y -= scrollSpeed;
+                }
 
-    stage.onMouseDown = function (event) {
-        if(cursor) {
-            cursor.place();
+                if(city.x > -city.left()) city.x = -city.left();
+                if(city.y > -city.top()) city.y = -city.top();
+                if(city.x - canvas.width < -city.right()) city.x = -city.right() + canvas.width;
+                if(city.y - canvas.height < -city.bottom()) city.y = -city.bottom() + canvas.height;
+            }
+        };
+        
+        stage.onMouseDown = function (event) {
+            if(cursor) {
+                cursor.place();
+            }
         }
-    }
-    
-    document.onkeyup = function (key) {
-        //cross browser issues exist
-        if (!key) { var key = window.event; }
-        switch (key.keyCode) {
-        case KEYCODE_1:
-            if (cursor) {
-                cursor.setBuilding(0);
+        
+        document.onkeyup = function (key) {
+            //cross browser issues exist
+            if (!key) { var key = window.event; }
+            switch (key.keyCode) {
+            case KEYCODE_1:
+                if (cursor) {
+                    cursor.setBuilding(0);
+                }
+                break;
+            case KEYCODE_2:
+                if (cursor) {
+                    cursor.setBuilding(1);
+                }
+                break;
+            case KEYCODE_3:
+                if (cursor) {
+                    cursor.setBuilding(2);
+                }
+                break;
+            case KEYCODE_4:
+                if (cursor) {
+                    cursor.setBuilding(3);
+                }
+                break;
+            case KEYCODE_5:
+                if (cursor) {
+                    cursor.setBuilding(4);
+                }
+                break;
+            case KEYCODE_6:
+                if (cursor) { 
+                    cursor.setBuilding(5);
+                }
+                break;
+            case KEYCODE_7:
+                if (cursor) {
+                    cursor.setBuilding(6);
+                }
+                break;
+            case KEYCODE_8:
+                if (cursor) {
+                    cursor.setBuilding(7);
+                }
+                break;
+            case KEYCODE_9:
+                if (cursor) {
+                    cursor.setBuilding(8);
+                }
+                break;
             }
-            break;
-        case KEYCODE_2:
-            if (cursor) {
-                cursor.setBuilding(1);
-            }
-            break;
-        case KEYCODE_3:
-            if (cursor) {
-                cursor.setBuilding(2);
-            }
-            break;
-        case KEYCODE_4:
-            if (cursor) {
-                cursor.setBuilding(3);
-            }
-            break;
-        case KEYCODE_5:
-            if (cursor) {
-                cursor.setBuilding(4);
-            }
-            break;
-        case KEYCODE_6:
-            if (cursor) { 
-                cursor.setBuilding(5);
-            }
-            break;
-        case KEYCODE_7:
-            if (cursor) {
-                cursor.setBuilding(6);
-            }
-            break;
-        case KEYCODE_8:
-            if (cursor) {
-                cursor.setBuilding(7);
-            }
-            break;
-        case KEYCODE_9:
-            if (cursor) {
-                cursor.setBuilding(8);
-            }
-            break;
         }
-    }
-    
-    var resize = function () {
+        
+        var resize = function () {
 	    canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    };
-    
-    stage.addChild(cursor);
-    stage.addChild(statusDisplay({'status': status}));     
+            canvas.height = window.innerHeight;
+        };
+        
+        stage.addChild(city);
+        stage.addChild(cursor);
+        stage.addChild(statusDisplay({'status': status}));     
 
-    window.addEventListener('resize', resize, false);
-    Ticker.addListener(update);
-    resize();
+        window.addEventListener('resize', resize, false);
+        Ticker.addListener(update);
+        resize();
+    });
 });

@@ -9,6 +9,7 @@ var selector = function (spec, my) {
     var status = spec.status;
 
     that.alpha = spec.alpha || 0.5;
+    that.buildings = spec.buildings || {};
     
     cursorX = 0;
     cursorY = 0;
@@ -32,16 +33,11 @@ var selector = function (spec, my) {
     that.tick = function () {
         this.x = city.x + cursorX;
         this.y = city.y + cursorY;
-        console.log(cursorX+","+cursorY);
-        console.log(city.x+","+city.y);
-        console.log("tick");
         if (!loaded && that.buildings && city.loaded()) {
-            console.log("load");
             that.removeAllChildren();
 		    for (var x = 0; x < that.buildings[building].width; ++x) {
 		        for (var y = 0; y < that.buildings[building].height; ++y) {
 			        var gid = that.buildings[building].data[x + y * that.buildings[building].width];
-                    console.log(x+","+y+": "+gid);
                     var tilesetId = gid < city.getTilesetData(2).firstgid ? 0 : 1;
                     var offset = city.getTilesetData(tilesetId*2).firstgid;
                     var newTile = tile({

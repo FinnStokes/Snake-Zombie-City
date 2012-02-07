@@ -7,6 +7,7 @@ Builder
 -------
 Use number keys to select buildings and click to place them.
 Numbers in top right are (from top to bottom):
+
 * Money
 * Population
 * Injured Population

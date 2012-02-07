@@ -20,14 +20,49 @@ jQuery(document).ready(function () {
 
     stage.addChild(res);
 
+    var reload = function () {
+	stage.removeAllChildren();
+	stage.addChild(res);
+        stage.onMouseDown = null;
+
+	res.onLoad(function () {
+	    status.money =  2000;
+            status.population = 5;
+            status.sick = 0;
+            status.infected = 0;
+
+	    city.x = 0;
+	    city.y = 0;
+
+            stage.onMouseDown = function (event) {
+		if(cursor) {
+                    cursor.place();
+		}
+            }
+
+            stage.addChild(city);
+            stage.addChild(cursor);
+            stage.addChild(status); 
+	});
+    };
+
     var status = statusDisplay({'img': '/builder/img/icons.png'});
     res.load(status);
 
-    var city = world({'socket': socket, 'status': status});
+    var city = world({'socket': socket, 'status': status, 'reload': reload});
     res.load(city);
 
     var buildings = jsonObject({'src': '/buildings.json'});
     res.load(buildings);
+
+    var resize = function () {
+	canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    };
+
+    var cursor;
+        
+    window.addEventListener('resize', resize, false);
 
     res.onLoad(function () {
         status.money =  2000;
@@ -37,7 +72,7 @@ jQuery(document).ready(function () {
         
         var scrollSpeed = 15;
     
-        var cursor = selector({
+        cursor = selector({
             'colour': Graphics.getRGB(255,255,0),
             'city': city,
             'status': status,
@@ -129,16 +164,10 @@ jQuery(document).ready(function () {
             }
         }
         
-        var resize = function () {
-	    canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        };
-        
         stage.addChild(city);
         stage.addChild(cursor);
         stage.addChild(status);     
 
-        window.addEventListener('resize', resize, false);
         Ticker.addListener(update);
         resize();
     });

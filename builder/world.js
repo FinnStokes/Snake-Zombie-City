@@ -22,8 +22,9 @@ var world = function (spec, my) {
     
     that.upload = function () {
         spec.socket.emit('setcity', my.data);
+	spec.reload();
         delete my.data;
-        that.load();
+        spec.socket.emit('getcity');
     };
     
     that.tileWidth = function () {
@@ -126,31 +127,31 @@ var world = function (spec, my) {
                 if (my.data.tilesets[tilesetId].tileproperties &&
                     my.data.tilesets[tilesetId].tileproperties[gid]) {
                     if(my.data.tilesets[tilesetId].tileproperties[gid]["income"]) {
-                        var income = parseInt(my.data.tilesets[tilesetId].tileproperties[gid]["income"]);
+                        var income = parseFloat(my.data.tilesets[tilesetId].tileproperties[gid]["income"]);
                         spec.status.money += income/20;
                     }
                     if (my.data.tilesets[tilesetId].tileproperties[gid]["tax"]) {
-                        var tax = parseInt(my.data.tilesets[tilesetId].tileproperties[gid]["tax"]);
+                        var tax = parseFloat(my.data.tilesets[tilesetId].tileproperties[gid]["tax"]);
                         spec.status.money += tax*spec.status.population/20;
                     }
                     if (my.data.tilesets[tilesetId].tileproperties[gid]["interest"]) {
-                        var interest = parseInt(my.data.tilesets[tilesetId].tileproperties[gid]["interest"]);
+                        var interest = parseFloat(my.data.tilesets[tilesetId].tileproperties[gid]["interest"]);
                         spec.status.money += interest*spec.status.money/20;
                     }
                     if (my.data.tilesets[tilesetId].tileproperties[gid]["population"]) {
-                        var population = parseInt(my.data.tilesets[tilesetId].tileproperties[gid]["population"]);
+                        var population = parseFloat(my.data.tilesets[tilesetId].tileproperties[gid]["population"]);
                         spec.status.population += population/20;
                     }
                     if (my.data.tilesets[tilesetId].tileproperties[gid]["cure"]) {
-                        var cure = parseInt(my.data.tilesets[tilesetId].tileproperties[gid]["cure"]);
+                        var cure = parseFloat(my.data.tilesets[tilesetId].tileproperties[gid]["cure"]);
                         spec.status.sick -= cure/20;
                     }
                     if (my.data.tilesets[tilesetId].tileproperties[gid]["purge"]) {
-                        var purge = parseInt(my.data.tilesets[tilesetId].tileproperties[gid]["purge"]);
+                        var purge = parseFloat(my.data.tilesets[tilesetId].tileproperties[gid]["purge"]);
                         spec.status.infected -= purge*spec.status.infected/20;
                     }
                     if (my.data.tilesets[tilesetId].tileproperties[gid]["protect"]) {
-                        var protect = parseInt(my.data.tilesets[tilesetId].tileproperties[gid]["protect"]);
+                        var protect = parseFloat(my.data.tilesets[tilesetId].tileproperties[gid]["protect"]);
                         sicken *= protect;
                         infect *= protect;
                         infectSick *= protect;

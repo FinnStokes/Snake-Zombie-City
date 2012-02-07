@@ -35,12 +35,12 @@ var selector = function (spec, my) {
         this.y = city.y + cursorY;
         if (!loaded && that.buildings && city.loaded()) {
             that.removeAllChildren();
-		    for (var x = 0; x < that.buildings[building].width; ++x) {
-		        for (var y = 0; y < that.buildings[building].height; ++y) {
-			        var gid = that.buildings[building].data[x + y * that.buildings[building].width];
-                    var tilesetId = gid < city.getTilesetData(2).firstgid ? 0 : 1;
-                    var offset = city.getTilesetData(tilesetId*2).firstgid;
-                    var newTile = tile({
+	    for (var x = 0; x < that.buildings[building].width; ++x) {
+		for (var y = 0; y < that.buildings[building].height; ++y) {
+		    var gid = that.buildings[building].data[x + y * that.buildings[building].width];
+		    var tilesetId = gid < city.getTilesetData(2).firstgid ? 0 : 1;
+		    var offset = city.getTilesetData(tilesetId*2).firstgid;
+		    var newTile = tile({
                         'x': (x / 2 - y / 2) * city.getTilesetData(0).tilewidth,
                         'y': (x / 2 + y / 2) * city.getTilesetData(0).tileheight,
                         'id': gid - offset,
@@ -50,11 +50,11 @@ var selector = function (spec, my) {
                             'y': city.getTilesetData(tilesetId*2).tileheight - city.getTilesetData(0).tileheight/2,
                         },
                     });
-                    that.addChild(newTile);
-		        }
-            }
+		    that.addChild(newTile);
 		}
-		loaded = true;
+	    }
+	}
+	loaded = true;
     };
 
     that.setBuilding(0);
@@ -84,16 +84,16 @@ var selector = function (spec, my) {
 	        }
 
 	        if (clear) {
-		        for (var x = 0; x < that.buildings[building].width; ++x) {
-		            for (var y = 0; y < that.buildings[building].height; ++y) {
-			            city.setTile(pos.x + x, pos.y + y, that.buildings[building].data[x + y * that.buildings[building].width]);
-		            }
+		    for (var x = 0; x < that.buildings[building].width; ++x) {
+		        for (var y = 0; y < that.buildings[building].height; ++y) {
+			    city.setTile(pos.x + x, pos.y + y, that.buildings[building].data[x + y * that.buildings[building].width]);
 		        }
-                status.money -= that.buildings[building].cost;
-                return true;
+		    }
+                    status.money -= that.buildings[building].cost;
+                    return true;
 	        } else {
-                return false;
-            }
+                    return false;
+		}
 	    }
     }
     

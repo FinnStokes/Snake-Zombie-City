@@ -6,6 +6,14 @@ var resourceManager = function (spec, my) {
     my.onLoad = [];
     my.resources = [];
 
+    that.text = new Text("0", "32px sans-serif", "#ffffff");
+    that.addChild(that.text);
+
+    if(spec.img) {
+	var bmp = new Bitmap(spec.img);
+	that.addChild(bmp);
+    }
+
     my.callback = function () {
         if (my.onLoad.length > 0 && that.loaded()) {
             while (my.onLoad.length > 0) {

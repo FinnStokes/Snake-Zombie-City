@@ -1,5 +1,12 @@
 { "buildings": [
     {
+        "name": "Road",
+        "width": 1,
+        "height": 1,
+        "cost": 100,
+        "data": [1]
+    },
+    {
         "name": "Apartments",
         "width": 1,
         "height": 1,

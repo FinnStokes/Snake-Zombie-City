@@ -1,3 +1,6 @@
+var NEW_ROAD_GID = 1;
+var CROSSROAD_GID = 16;
+
 var world = function (spec, my) {
     var that, tileset, tiles;
     my = my || {};
@@ -100,16 +103,56 @@ var world = function (spec, my) {
         return false;
     }
 
+    that.isRoad = function (x, y) {
+	if (x < 0 || x >= that.width() || y < 0 || y >= that.height()) {
+	    return false;
+	}
+	var index = x + (y * my.data.layers[0].width);
+        var gid = my.data.layers[0].data[index];
+        return gid >= NEW_ROAD_GID && gid <= CROSSROAD_GID;
+    }
+
+    var linkRoad = function (x, y, dir) {
+	var index = x + (y * my.data.layers[0].width);
+	var gid = ((my.data.layers[0].data[index] - 1) & dir) + 1;
+	my.data.layers[0].data[index] = gid;
+	tiles[index].gotoAndStop(gid);
+    }
+
     that.setTile = function (x, y, gid) {
+        if (gid == NEW_ROAD_GID) {
+	    gid = 0;
+	    if (that.isRoad(x-1, y)) {
+		//linkRoad(x-1, y, 2);
+		gid = gid & 1;
+		console.log("Road left");
+	    }
+	    if (that.isRoad(x+1, y)) {
+		//linkRoad(x+1, y, 1);
+		gid = gid & 2;
+		console.log("Road right");
+	    }
+	    if (that.isRoad(x, y-1)) {
+		//linkRoad(x, y-1, 8);
+		gid = gid & 4;
+		console.log("Road top");
+	    }
+	    if (that.isRoad(x, y+1)) {
+		//linkRoad(x, y+1, 4);
+		gid = gid & 8;
+		console.log("Road bottom");
+	    }
+	    console.log(gid);
+	    gid += 1;
+	}
         var index = x + (y * my.data.layers[0].width);
         my.data.layers[0].data[index] = gid;
         var tilesetId = gid < my.data.tilesets[2].firstgid ? 0 : 1;
         var offset = my.data.tilesets[tilesetId*2].firstgid;
         tiles[index].setTile(gid - offset, tileset[tilesetId], 
-                            { 'x': my.data.tilesets[0].tilewidth/2,
-                              'y': my.data.tilesets[tilesetId*2].tileheight - my.data.tilesets[0].tileheight/2,
-                            });
-        
+                             { 'x': my.data.tilesets[0].tilewidth/2,
+                               'y': my.data.tilesets[tilesetId*2].tileheight - my.data.tilesets[0].tileheight/2,
+                             });
     }
 
     that.tick = function () {

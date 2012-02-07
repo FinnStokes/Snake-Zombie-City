@@ -21,20 +21,19 @@ jQuery(document).ready(function () {
     stage.addChild(res);
 
     var load = function () {
-	console.log("load");
 	stage.removeAllChildren();
 	stage.addChild(res);
         stage.onMouseDown = null;
         document.onkeyup = null;
-	update.tick = null;
+	update.tick = function () {
+		    stage.update();
+        };
 	res.text.text = "Loading...";
 	res.visible = true;
 
 	res.onLoad(function () {
-	    console.log("res loaded");
 	    res.text.text = "Press any key to play";
 	    document.onkeyup = function (key) {
-		console.log("play");
 		status.money =  2000;
 		status.population = 5;
 		status.sick = 0;

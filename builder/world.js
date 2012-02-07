@@ -114,8 +114,9 @@ var world = function (spec, my) {
 
     var linkRoad = function (x, y, dir) {
 	var index = x + (y * my.data.layers[0].width);
-	var gid = ((my.data.layers[0].data[index] - 1) & dir) + 1;
-	my.data.layers[0].data[index] = gid;
+	var gid = my.data.layers[0].data[index] - 1;
+        gid = gid | dir;
+	my.data.layers[0].data[index] = gid + 1;
 	tiles[index].gotoAndStop(gid);
     }
 
@@ -123,26 +124,21 @@ var world = function (spec, my) {
         if (gid == NEW_ROAD_GID) {
 	    gid = 0;
 	    if (that.isRoad(x-1, y)) {
-		//linkRoad(x-1, y, 2);
-		gid = gid & 1;
-		console.log("Road left");
+		linkRoad(x-1, y, 2);
+		gid = gid | 1;
 	    }
 	    if (that.isRoad(x+1, y)) {
-		//linkRoad(x+1, y, 1);
-		gid = gid & 2;
-		console.log("Road right");
+		linkRoad(x+1, y, 1);
+		gid = gid | 2;
 	    }
 	    if (that.isRoad(x, y-1)) {
-		//linkRoad(x, y-1, 8);
-		gid = gid & 4;
-		console.log("Road top");
+		linkRoad(x, y-1, 8);
+		gid = gid | 4;
 	    }
 	    if (that.isRoad(x, y+1)) {
-		//linkRoad(x, y+1, 4);
-		gid = gid & 8;
-		console.log("Road bottom");
+		linkRoad(x, y+1, 4);
+		gid = gid | 8;
 	    }
-	    console.log(gid);
 	    gid += 1;
 	}
         var index = x + (y * my.data.layers[0].width);

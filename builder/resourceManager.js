@@ -6,13 +6,21 @@ var resourceManager = function (spec, my) {
     my.onLoad = [];
     my.resources = [];
 
+    if(spec.img) {
+        var img = new Image();
+        img.onload = function () {
+	    var bmp = new Bitmap(img);
+	    that.addChildAt(bmp,0);
+            bmp.x = -img.width/2;
+            bmp.y = -img.height/2;
+        }
+        img.src = spec.img;
+    }
+
     that.text = new Text("0", "32px sans-serif", "#ffffff");
     that.addChild(that.text);
-
-    if(spec.img) {
-	var bmp = new Bitmap(spec.img);
-	that.addChild(bmp);
-    }
+    that.text.x = 105;
+    that.text.y = 100;
 
     my.callback = function () {
         if (my.onLoad.length > 0 && that.loaded()) {

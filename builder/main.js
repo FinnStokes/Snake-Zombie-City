@@ -20,7 +20,8 @@ jQuery(document).ready(function () {
 
     stage.addChild(res);
 
-    var status = {};
+    var status = statusDisplay({'img': '/builder/img/icons.png'});
+    res.load(status);
 
     var city = world({'socket': socket, 'status': status});
     res.load(city);
@@ -28,12 +29,9 @@ jQuery(document).ready(function () {
     var buildings = jsonObject({'src': '/buildings.json'});
     res.load(buildings);
 
-    console.log('loading');
-
     res.onLoad(function () {
-        console.log('loaded');
         status.money =  2000;
-        status.population = 0;
+        status.population = 5;
         status.sick = 0;
         status.infected = 0;
         
@@ -138,7 +136,7 @@ jQuery(document).ready(function () {
         
         stage.addChild(city);
         stage.addChild(cursor);
-        stage.addChild(statusDisplay({'status': status}));     
+        stage.addChild(status);     
 
         window.addEventListener('resize', resize, false);
         Ticker.addListener(update);

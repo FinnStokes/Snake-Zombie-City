@@ -7,10 +7,10 @@ Builder
 -------
 Use number keys to select buildings and click to place them.
 Numbers in top right are (from top to bottom):
- * Money
- * Population
- * Injured Population
- * Infected Population
+* Money
+* Population
+* Injured Population
+* Infected Population
 
 Rescue
 ------
@@ -18,8 +18,8 @@ Your goal is to lead the civilians to the Gardens, where they are evacuated and 
 and being hit by the infected lose you points, so watch out! You need to work as a team to do well, but you each have an
 individual score.
 
-Controls:
-P1: WASD + E to shoot
-P2: UHJK + I to shoot
-P3: Arrows + Shift to shoot
-P4: Numpad 8456 + Numpad 9 to shoot
+### Controls
+P1: WASD + E to shoot  
+P2: UHJK + I to shoot  
+P3: Arrows + Shift to shoot  
+P4: Numpad 8456 + Numpad 9 to shoot  

@@ -8,7 +8,7 @@ var statusDisplay = function (spec, my) {
     that.y = spec.y || 0;
 
     that.money = spec.money || 0;
-    that.population = spec.population || 0;
+    that.healthy = spec.healthy || 0;
     that.sick = spec.sick || 0;
     that.infected = spec.infected || 0;
     
@@ -59,7 +59,7 @@ var statusDisplay = function (spec, my) {
 
     that.tick = function () {
         text[0].text = "" + Math.floor(that.money);
-        text[1].text = "" + Math.floor(that.population);
+        text[1].text = "" + Math.floor(that.healthy);
         text[2].text = "" + Math.floor(that.sick);
         text[3].text = "" + Math.floor(that.infected);
     }

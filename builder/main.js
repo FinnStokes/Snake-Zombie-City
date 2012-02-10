@@ -8,6 +8,7 @@ var KEYCODE_6 = 54;
 var KEYCODE_7 = 55;
 var KEYCODE_8 = 56;
 var KEYCODE_9 = 57;
+var KEYCODE_P = 80;
 
 jQuery(document).ready(function () {
     var canvas = jQuery('#game').get(0);
@@ -35,7 +36,7 @@ jQuery(document).ready(function () {
 	    res.text.text = "Press any key to play";
 	    document.onkeyup = function (key) {
 		status.money =  2000;
-		status.population = 5;
+		status.healthy = 0;
 		status.sick = 0;
 		status.infected = 0;
 		
@@ -51,7 +52,8 @@ jQuery(document).ready(function () {
 		    'buildings': buildings.data.buildings,
 		});
 		
-		update.tick = function () {
+		update.tick = function (frameTime) {
+		    status.frameTime = frameTime / 1000;
 		    stage.update();
 		    if(stage.mouseInBounds) {
 			if(cursor){
@@ -137,6 +139,8 @@ jQuery(document).ready(function () {
 			    cursor.setBuilding(9);
 			}
 			break;
+		    case KEYCODE_P:
+			city.toggleOverlay();
 		    }
 		}
 

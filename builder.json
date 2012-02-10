@@ -14,7 +14,7 @@
  "orientation":"isometric",
  "properties":
     {
-
+     "transportRate":"0.1"
     },
  "tileheight":64,
  "tilesets":[
@@ -33,9 +33,73 @@
          "tileheight":64,
          "tileproperties":
             {
+             "0":
+                {
+                 "transport":"true"
+                },
+             "1":
+                {
+                 "transport":"true"
+                },
+             "10":
+                {
+                 "transport":"true"
+                },
+             "11":
+                {
+                 "transport":"true"
+                },
+             "12":
+                {
+                 "transport":"true"
+                },
+             "13":
+                {
+                 "transport":"true"
+                },
+             "14":
+                {
+                 "transport":"true"
+                },
+             "15":
+                {
+                 "transport":"true"
+                },
              "16":
                 {
                  "buildable":"true"
+                },
+             "2":
+                {
+                 "transport":"true"
+                },
+             "3":
+                {
+                 "transport":"true"
+                },
+             "4":
+                {
+                 "transport":"true"
+                },
+             "5":
+                {
+                 "transport":"true"
+                },
+             "6":
+                {
+                 "transport":"true"
+                },
+             "7":
+                {
+                 "transport":"true"
+                },
+             "8":
+                {
+                 "transport":"true"
+                },
+             "9":
+                {
+                 "transport":"true"
                 }
             },
          "tilewidth":128

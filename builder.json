@@ -14,7 +14,9 @@
  "orientation":"isometric",
  "properties":
     {
-     "transportRate":"0.1"
+     "transportRate":"0.1",
+     "infectionRate":"0.001",
+     "contagionRate":"0.1"
     },
  "tileheight":64,
  "tilesets":[

@@ -1,9 +1,5 @@
 var NEW_ROAD_GID = 1;
 var CROSSROAD_GID = 16;
-var TRANSPORT_CHANCE = 0.5;
-var GROWTH_CHANCE = 0.5;
-var INFECTION_CHANCE = 0.01;
-var CONTAGION_CHANCE = 0.05;
 
 var world = function (spec, my) {
     var that, tileset, tiles, overlay;
@@ -15,9 +11,14 @@ var world = function (spec, my) {
     tileset = [];
     tiles = [];
 
+    my.rules = [];
     my.status = [];
     
     var onLoaded;
+
+    that.addRule = function(rule) {
+	my.rules.push(rule);
+    }
 
     that.load = function (callback) {
         onLoaded = callback;
@@ -25,7 +26,7 @@ var world = function (spec, my) {
     };
     
     spec.socket.on('city', function (newCity) {
-        if(!my.data) {
+        if(!my.data && newCity) {
             my.data = newCity;
             load();
         }
@@ -176,83 +177,44 @@ var world = function (spec, my) {
                              });
     }
 
+    that.getStatus = function (index) {
+	return my.status[index];
+    }
+
+    that.getProperties = function (index) {
+	if (index < 0 || index >= my.data.layers[0].data.length) {
+	    return {};
+	}
+	
+	var gid = my.data.layers[0].data[index];
+        var tilesetId = gid < my.data.tilesets[2].firstgid ? 0 : 2;
+        gid -= my.data.tilesets[tilesetId].firstgid;
+        
+	if (!my.data.tilesets[tilesetId].tileproperties ||
+            !my.data.tilesets[tilesetId].tileproperties[gid]) {
+	    return {};
+	}
+	
+	var properties = my.data.tilesets[tilesetId].tileproperties[gid];
+
+	/*if (properties.linked) {
+	    var delX = properties.linked.x || 0;
+	    var delY = properties.linked.y || 0;
+	    return getProperties(x + delX, y + delY);
+	}*/
+
+	return properties;
+    }
+
     that.tick = function () {
 	var elapsedTime = spec.status.frameTime;
         for (var y = 0; y < my.data.layers[0].height; ++y) {
             for (var x = 0; x < my.data.layers[0].width; ++x) {
-                var index = x + (y * my.data.layers[0].width);
-                var gid = my.data.layers[0].data[index];
-                var tilesetId = gid < my.data.tilesets[2].firstgid ? 0 : 2;
-		var rate = 0;
-                gid -= my.data.tilesets[tilesetId].firstgid;
-                if (my.data.tilesets[tilesetId].tileproperties &&
-                    my.data.tilesets[tilesetId].tileproperties[gid]) {
-		    if (my.status[index].infected == 0) {
-			if (my.data.tilesets[tilesetId].tileproperties[gid]["population"]) {
-			    rate = my.data.tilesets[tilesetId].tileproperties[gid]["population"];
-			    growth(index, rate, elapsedTime, 'healthy');
-			}
-			if (my.data.tilesets[tilesetId].tileproperties[gid]["transport"]) {
-			    rate = my.data.properties.transportRate || 0;
-			    var healthy = my.status[index].healthy;
-			    if (my.status[index-1]){
-				var cap = that.getProperty(x-1,y,'capacity');
-				if (cap) {
-				    if (my.status[index-1].healthy < healthy) {
-					transport(index, index-1, rate, elapsedTime, 'healthy', cap);
-				    }
-				} else {
-				    if (my.status[index-1].healthy > healthy) {
-					transport(index-1, index, rate, elapsedTime, 'healthy');
-				    }
-				}
-			    }
-			    if (my.status[index+1]){
-				var cap = that.getProperty(x+1,y,'capacity');
-				if (cap) {
-				    if (my.status[index+1].healthy < healthy) {
-					transport(index, index+1, rate, elapsedTime, 'healthy', cap);
-				    }
-				} else {
-				    if (my.status[index+1].healthy > healthy) {
-					transport(index+1, index, rate, elapsedTime, 'healthy');
-				    }
-				}
-			    }
-			    if (my.status[index-my.data.layers[0].width]){
-				var cap = that.getProperty(x,y-1,'capacity');
-				if (cap) {
-				    if (my.status[index-my.data.layers[0].width].healthy < healthy) {
-					transport(index, index-my.data.layers[0].width, rate, elapsedTime, 'healthy', cap);
-				    }
-				} else {
-				    if (my.status[index-my.data.layers[0].width].healthy > healthy) {
-					transport(index-my.data.layers[0].width, index, rate, elapsedTime, 'healthy');
-				    }
-				}
-			    }
-			    if (my.status[index+my.data.layers[0].width]){
-				var cap = that.getProperty(x,y+1,'capacity');
-				if (cap) {
-				    if (my.status[index+my.data.layers[0].width].healthy < healthy) {
-					transport(index, index+my.data.layers[0].width, rate, elapsedTime, 'healthy', cap);
-				    }
-				} else {
-				    if (my.status[index+my.data.layers[0].width].healthy > healthy) {
-					transport(index+my.data.layers[0].width, index, rate, elapsedTime, 'healthy');
-				    }
-				}
-			    }
-			}
-                    }
-		}
-		rate = my.data.properties.infectionRate;
-		infect(index, rate, elapsedTime, INFECTION_CHANCE, 'healthy');
-		infect(index, rate*2, elapsedTime, INFECTION_CHANCE, 'sick');
-		if (my.status[index].infected > 0) {
-		    rate = my.data.properties.contagionRate;
-		    infect(index, rate*my.status[index].infected, elapsedTime, CONTAGION_CHANCE, 'healthy');
-		    infect(index, rate*2*my.status[index].infected, elapsedTime, CONTAGION_CHANCE, 'sick');
+		var index = x + (y * my.data.layers[0].width);
+		var properties = that.getProperties(index);
+		var status = my.status[index];
+		for (var i = 0; i < my.rules.length; i++) {
+		    my.rules[i].eval(index,my.data.properties,properties,status,elapsedTime);
 		}
             }
         }
@@ -267,70 +229,11 @@ var world = function (spec, my) {
 		    spec.status.sick += my.status[index].sick;
 		    spec.status.infected += my.status[index].infected;
 		}
-	    }
+    }
 	}
         if(spec.status.infected > spec.status.healthy) {
             that.upload();
         }
-    }
-
-    var growthTimer = [];
-    var growth = function (index, rate, time, type, cap) {
-	if (!growthTimer[index]) {
-	    growthTimer[index] = {};
-	}
-	if (!growthTimer[index][type]) {
-	    growthTimer[index][type] = 0;
-	}
-	growthTimer[index][type] += rate*time;
-	while (growthTimer[index][type] > GROWTH_CHANCE)  {
-	    growthTimer[index][type] -= GROWTH_CHANCE;
-	    if((!cap || my.status[index][type] <= cap-1) && Math.random() < GROWTH_CHANCE) {
-		my.status[index][type]++;
-	    }
-	}
-    }
-
-    var infectTimer = [];
-    var infect = function (index, rate, time, chance, type, cap) {
-	if (!infectTimer[index]) {
-	    infectTimer[index] = {};
-	}
-	if (!infectTimer[index][type]) {
-	    infectTimer[index][type] = 0;
-	}
-	if(my.status[index][type] > 0) {
-	    infectTimer[index][type] += rate * time * my.status[index][type];
-	    while(infectTimer[index][type] > chance)  {
-		infectTimer[index][type] -= chance;
-		if(my.status[index][type] >= 1 && (!cap || my.status[index]['infected'] <= cap-1) && Math.random() < chance) {
-		    my.status[index][type]--;
-		    my.status[index]['infected']++;
-		}
-	    }
-	}
-    }
-
-    var transportTimer = [];
-    var transport = function (from, to, rate, time, type, cap) {
-	if (!transportTimer[from]) {
-	    transportTimer[from] = [];
-	}
-	if (!transportTimer[from][to]) {
-	    transportTimer[from][to] = {};
-	}
-	if (!transportTimer[from][to][type]) {
-	    transportTimer[from][to][type] = 0;
-	}
-	diff = my.status[from][type] - my.status[to][type];
-	transportTimer[from][to][type] += rate * time * diff;
-	while(transportTimer[from][to][type] > TRANSPORT_CHANCE)  {
-	    transportTimer[from][to][type] -= TRANSPORT_CHANCE;
-	    if(my.status[from][type] >= 1 && (!cap || my.status[to][type] <= cap-1) && Math.random() < TRANSPORT_CHANCE) {
-		my.status[from][type]--;
-		my.status[to][type]++;
-	    }
-	}
     }
     
     that.loaded = function () {
@@ -394,8 +297,10 @@ var world = function (spec, my) {
 
     var load = function () {
         if (my.data) {
+	    my.rules = [];
 	    my.status = [];
-            for (var y = 0; y < my.data.layers[0].height; ++y) {
+	    addRuleset(that);
+	    for (var y = 0; y < my.data.layers[0].height; ++y) {
 		for (var x = 0; x < my.data.layers[0].width; ++x) {
                     var index = x + (y * my.data.layers[0].width);
 		    my.status[index] = {

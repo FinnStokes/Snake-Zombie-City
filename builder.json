@@ -57,35 +57,35 @@
             {
              "0":
                 {
-                 "civilian":"true"
+                 "snombie":"true"
                 },
              "1":
                 {
-                 "civilian":"true"
+                 "snombie":"true"
                 },
              "10":
                 {
-                 "spawn":"true"
+                 "snombie":"true"
                 },
              "11":
                 {
-                 "snombie":"true"
+                 "spawn":"true"
                 },
              "12":
                 {
-                 "snombie":"true"
+                 "civilian":"true"
                 },
              "13":
                 {
-                 "snombie":"true"
+                 "spawn":"true"
                 },
              "14":
                 {
-                 "snombie":"true"
+                 "spawn":"true"
                 },
              "15":
                 {
-                 "snombie":"true"
+                 "spawn":"true"
                 },
              "2":
                 {
@@ -93,7 +93,7 @@
                 },
              "3":
                 {
-                 "snombie":"true"
+                 "civilian":"true"
                 },
              "32":
                 {
@@ -109,7 +109,7 @@
                 },
              "6":
                 {
-                 "spawn":"true"
+                 "snombie":"true"
                 },
              "7":
                 {
@@ -117,11 +117,11 @@
                 },
              "8":
                 {
-                 "spawn":"true"
+                 "snombie":"true"
                 },
              "9":
                 {
-                 "spawn":"true"
+                 "snombie":"true"
                 }
             },
          "tilewidth":192

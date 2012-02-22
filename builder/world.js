@@ -214,7 +214,7 @@ var world = function (spec, my) {
 		var properties = that.getProperties(index);
 		var status = my.status[index];
 		for (var i = 0; i < my.rules.length; i++) {
-		    my.rules[i].eval(index,my.data.properties,properties,status,elapsedTime);
+		    my.rules[i].eval(index,my.data.properties,spec.status,properties,status,elapsedTime);
 		}
             }
         }

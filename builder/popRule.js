@@ -24,7 +24,7 @@ var popRule = function (spec, my) {
 	console.log(offsets);
     }
 
-    that.eval = function (index, mapProperties, properties, status, time) {
+    that.eval = function (index, globalProperties, globalStatus, properties, status, time) {
 	for (var i = 0; i < requiredProps.length; i++) {
 	    if (!properties[requiredProps[i]]) {
 		return;
@@ -36,13 +36,13 @@ var popRule = function (spec, my) {
 		timer[index] = 0;
 	    }
 
-	    var rate = getRate(mapProperties, properties, status);
+	    var rate = getRate(globalProperties, globalStatus, properties, status);
 	    timer[index] += rate*time;
 
 	    while (timer[index] > chance)  {
 		timer[index] -= chance;
 		if(Math.random() < chance) {
-		    effect(mapProperties, properties, status);
+		    effect(globalProperties, globalStatus, properties, status);
 		}
 	    }
 	} else {
@@ -63,13 +63,13 @@ var popRule = function (spec, my) {
 		    timer[index][other] = 0;
 		}
 		
-		var rate = getRate(mapProperties, properties, status, otherProperties, otherStatus);
+		var rate = getRate(globalProperties, globalStatus, properties, status, otherProperties, otherStatus);
 		timer[index][other] += rate*time;
 		
 		while (timer[index][other] > chance)  {
 		    timer[index][other] -= chance;
 		    if(Math.random() < chance) {
-			effect(mapProperties, properties, status, otherProperties, otherStatus);
+			effect(globalProperties, globalStatus, properties, status, otherProperties, otherStatus);
 		    }
 		}
 	    }

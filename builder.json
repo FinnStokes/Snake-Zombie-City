@@ -17,7 +17,8 @@
      "transportRate":"0.1",
      "snombieTransportRate":"0.03",
      "infectionRate":"0.0005",
-     "contagionRate":"0.1"
+     "contagionRate":"0.1",
+     "taxRate":"0.1"
     },
  "tileheight":64,
  "tilesets":[

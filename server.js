@@ -1,7 +1,11 @@
-var app = require('express').createServer();
+var express = require("express");
+var app = express();
 var fs  = require('fs');
+var http = require('http');
 
-var io = require('socket.io').listen(app);
+server = http.createServer(app);
+var io = require('socket.io').listen(server);
+server.listen(80);
 
 var builderIo = io.of('/builder');
 var rescueIo = io.of('/rescue');
